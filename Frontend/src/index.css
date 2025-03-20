@@ -6,6 +6,6 @@
 @plugin "daisyui";
 
 @theme {
-  /* --font-script: "Style Script", serif; */
-  --font-script: "Montserrat", sans-serif;
+  --font-script: "Style Script", serif;
+  /* --font-script: "Montserrat", sans-serif; */
 }
