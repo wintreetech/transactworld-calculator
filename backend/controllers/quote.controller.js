@@ -1,6 +1,7 @@
 import Quote from "../models/quote.model.js";
 import quoteCollection from "../models/quotes.model.js";
 
+//  what it is
 // Create Quote
 const createQuote = async (req, res) => {
   try {
