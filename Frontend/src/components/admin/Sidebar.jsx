@@ -44,12 +44,8 @@ function Sidebar() {
   const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleLogout = async () => {
-    console.log("user logged out");
-
     try {
       const response = await axios.post(`${baseUrl}${apiUrl}/auth/logout`);
-
-      console.log("response", response);
 
       localStorage.removeItem("user");
 

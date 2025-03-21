@@ -32,8 +32,6 @@ function Auth() {
   const ctx = useContext(AuthContext);
   const user = ctx.user;
 
-  console.log(ctx);
-
   const navigate = useNavigate();
   const [registerForm, setRegisterForm] = useState({
     username: "",
@@ -65,11 +63,6 @@ function Auth() {
       localStorage.setItem("user", JSON.stringify(response.data));
       toast.success(
         `${type.charAt(0).toUpperCase() + type.slice(1)} Successful`
-      );
-
-      console.log(
-        "response from the handlesubmit when clicked the button",
-        response
       );
 
       if (response && response.data.role === "admin") {
