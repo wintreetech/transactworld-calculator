@@ -7,6 +7,8 @@ import AuthContext from "../../context/AuthContext";
 const baseUrl = import.meta.env.VITE_BASE_URL;
 const apiUrl = import.meta.env.VITE_API_URL;
 
+let role;
+
 const handleAuthRequest = async (data, type) => {
   try {
     const endpoint = type === "register" ? "/register" : "/login";
@@ -14,6 +16,7 @@ const handleAuthRequest = async (data, type) => {
       `${baseUrl}${apiUrl}/auth${endpoint}`,
       data
     );
+
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -64,9 +67,14 @@ function Auth() {
         `${type.charAt(0).toUpperCase() + type.slice(1)} Successful`
       );
 
+      console.log(
+        "response from the handlesubmit when clicked the button",
+        response
+      );
+
       if (response && response.data.role === "admin") {
         navigate("/admin");
-      } else if (response && response.data.role === "user") {
+      } else {
         navigate("/");
       }
     } catch (error) {

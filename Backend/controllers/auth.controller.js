@@ -24,15 +24,35 @@ const register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await Auth.create({
+    const registerUser = await Auth.create({
       username,
       email,
       password: hashedPassword,
     });
 
+    const userResponse = {
+      username: registerUser.username,
+      email: registerUser.email,
+      role: registerUser.role,
+    };
+
+    // Generate JWT token
+    const token = jwt.sign(
+      {
+        id: registerUser._id,
+        username: registerUser.username,
+        email: registerUser.email,
+      },
+      process.env.JWT_SECRET // Use your secret key from environment variables
+    );
+
     return res.status(201).json({
       success: true,
       message: "Account created successfully",
+      data: {
+        ...userResponse,
+        token,
+      },
     });
   } catch (error) {
     console.log(error);
