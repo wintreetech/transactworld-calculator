@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import QuotesDetails from "./QuotesDetails";
 
 import { jsPDF } from "jspdf";
@@ -8,8 +9,11 @@ const doc = new jsPDF();
 function Quotes() {
   const [formData, setFormData] = useState({
     customername: "",
-    invoicename: "",
+    quotename: "",
   });
+
+  const [invoiceName, setInvoiceName] = useState("");
+  const [invoiceData, setInvoiceData] = useState([]);
 
   const handleChange = (e) => {
     const { value, name } = e.target;
@@ -55,11 +59,22 @@ function Quotes() {
     doc.save("invoice.pdf");
   };
 
+  const saveInvoice = () => {
+    toast.success("save quotes succesfully");
+    handlePdfGenerate();
+    console.log("save quote", {
+      customername: formData.customername,
+      invoiceName,
+      quotename: formData.quotename,
+    });
+  };
+
   return (
     <>
       <div className="mb-4 gap-4 flex flex-col">
         <div className="flex justify-between">
           <div className="flex gap-4">
+            {/* select customer number */}
             <select
               value={formData.customername}
               onChange={handleChange}
@@ -72,9 +87,11 @@ function Quotes() {
               <option value="Bob Smith">Bob Smith</option>
               <option value="Carol White">Carol White</option>
             </select>
+
+            {/* Select Invoice to fetch data */}
             <select
-              value={formData.invoicename}
-              onChange={handleChange}
+              value={invoiceName}
+              onChange={(e) => setInvoiceName(e.target.value)}
               name="invoicename"
               className="select w-full"
             >
@@ -86,12 +103,62 @@ function Quotes() {
             </select>
           </div>
           <div>
-            <button className="btn" onClick={handlePdfGenerate}>
+            {/* <button className="btn" onClick={handlePdfGenerate}>
               Generate PDF
+            </button> */}
+            <button
+              className="btn"
+              onClick={() => document.getElementById("my_modal_1").showModal()}
+            >
+              Save & Download
             </button>
+            <dialog
+              id="my_modal_1"
+              className="modal modal-bottom sm:modal-middle"
+            >
+              <div className="modal-box">
+                <label className="input w-full">
+                  <svg
+                    className="h-[1em] opacity-50"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                  >
+                    <g
+                      strokeLinejoin="round"
+                      strokeLinecap="round"
+                      strokeWidth="2.5"
+                      fill="none"
+                      stroke="currentColor"
+                    >
+                      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path>
+                      <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                    </g>
+                  </svg>
+                  <input
+                    value={formData.quotename}
+                    onChange={handleChange}
+                    type="text"
+                    name="quotename"
+                    className="grow"
+                    placeholder="example"
+                  />
+                </label>
+                <div className="modal-action">
+                  <form method="dialog">
+                    <button onClick={saveInvoice} type="submit" className="btn">
+                      Save
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </dialog>
           </div>
         </div>
-        <QuotesDetails />
+        <QuotesDetails
+          invoiceData={invoiceData}
+          invoicename={invoiceName}
+          customername={formData.customername}
+        />
       </div>
     </>
   );

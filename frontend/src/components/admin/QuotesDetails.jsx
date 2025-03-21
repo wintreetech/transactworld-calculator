@@ -59,15 +59,16 @@ const initialInvoices = [
   },
 ];
 
-function QuotesDetails() {
-  const [quotes, setQuotes] = useState([]);
+function QuotesDetails({ invoicename, customername }) {
   const [invoiceEntryies, setInvoiceEntryies] = useState([]);
   const [invoices, setInvoices] = useState(initialInvoices);
   const [selectedInvoice, setSelectInvoice] = useState("");
 
   // Update invoice with the new proposed rate and recalc computed fees
   const handleProposedRateChange = (id, value) => {
-    setInvoices((prevInvoices) =>
+    setInvoices((prevInvoices) => {
+      console.log(["prevInvoices", prevInvoices]);
+
       prevInvoices.map((invoice) => {
         if (invoice.id === id) {
           // Try to convert the entered value to a number
@@ -89,8 +90,8 @@ function QuotesDetails() {
           };
         }
         return invoice;
-      })
-    );
+      });
+    });
   };
 
   return (
