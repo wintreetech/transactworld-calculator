@@ -7,8 +7,6 @@ import AuthContext from "../../context/AuthContext";
 const baseUrl = import.meta.env.VITE_BASE_URL;
 const apiUrl = import.meta.env.VITE_API_URL;
 
-let role;
-
 const handleAuthRequest = async (data, type) => {
   try {
     const endpoint = type === "register" ? "/register" : "/login";
@@ -33,6 +31,8 @@ const handleAuthRequest = async (data, type) => {
 function Auth() {
   const ctx = useContext(AuthContext);
   const user = ctx.user;
+
+  console.log(ctx);
 
   const navigate = useNavigate();
   const [registerForm, setRegisterForm] = useState({

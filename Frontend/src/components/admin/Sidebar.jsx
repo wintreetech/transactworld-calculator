@@ -1,14 +1,17 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AiOutlineDashboard } from "react-icons/ai";
 import { FaRegUser } from "react-icons/fa";
 import { TbFileInvoice } from "react-icons/tb";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { FiPenTool } from "react-icons/fi";
 import { RxHamburgerMenu } from "react-icons/rx";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 function Sidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const MenuItem = [
     {
@@ -35,13 +38,29 @@ function Sidebar() {
       icon: <FiPenTool />,
       path: "/admin/quotes",
     },
-    {
-      id: 5,
-      name: "Logout",
-      icon: <RiLogoutBoxLine />,
-      path: "/auth",
-    },
   ];
+
+  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const apiUrl = import.meta.env.VITE_API_URL;
+
+  const handleLogout = async () => {
+    console.log("user logged out");
+
+    try {
+      const response = await axios.post(`${baseUrl}${apiUrl}/auth/logout`);
+
+      console.log("response", response);
+
+      localStorage.removeItem("user");
+
+      const message = response.data.message;
+      toast.success(message);
+
+      navigate("/auth");
+    } catch (error) {
+      console.error("logout error", error);
+    }
+  };
 
   return (
     <>
@@ -80,6 +99,14 @@ function Sidebar() {
                 </Link>
               );
             })}
+            <li>
+              <button
+                onClick={handleLogout}
+                className="gap-3 px-4 py-3 hover:bg-gray-100 text-red-500 mb-3 text-lg rounded-lg"
+              >
+                <RiLogoutBoxLine /> Logout
+              </button>
+            </li>
           </ul>
         </div>
       </div>
