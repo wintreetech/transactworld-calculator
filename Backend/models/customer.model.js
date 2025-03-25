@@ -2,6 +2,31 @@ import { Schema, model } from "mongoose";
 
 const CustomerSchema = new Schema(
   {
+    businessAddress: {
+      type: String,
+      required: [true, "BusinessAddress is required"],
+      trim: true,
+    },
+    businessIndustry: {
+      type: String,
+      required: [true, "BusinessIndustry is required"],
+      trim: true,
+    },
+    businessName: {
+      type: String,
+      required: [true, "BusinessName is required"],
+      trim: true,
+    },
+    businessType: {
+      type: String,
+      required: [true, "BusinessType is required"],
+      trim: true,
+    },
+    desiredServices: {
+      type: [String],
+      required: [true, "DesiredServices is required"],
+      trim: true,
+    },
     name: {
       type: String,
       required: [true, "Name is required"],
@@ -21,19 +46,13 @@ const CustomerSchema = new Schema(
       trim: true,
       unique: true,
     },
-    companyname: {
+    merchantCategoryCode: {
       type: String,
-      required: [true, "Company name is required"],
-      trim: true,
+      required: [true, "Merchant Category Code is required"],
     },
-    companytype: {
+    merchantCategoryType: {
       type: String,
-      required: [true, "Company type is required"],
-      trim: true,
-    },
-    companyaddress: {
-      type: String,
-      trim: true,
+      required: [true, "Merchant Category Type is required"],
     },
     companynumber: {
       type: String,

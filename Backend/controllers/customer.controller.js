@@ -4,23 +4,31 @@ import Customer from "../models/customer.model.js";
 const createCustomer = async (req, res) => {
   try {
     const {
+      businessAddress,
+      businessIndustry,
+      businessName,
+      businessType,
+      desiredServices,
       name,
       email,
       phone,
-      companyname,
-      companytype,
-      companyaddress,
+      merchantCategoryCode,
+      merchantCategoryType,
       companynumber,
     } = req.body;
 
     if (
-      !name ||
+      !businessAddress ||
+      !businessIndustry ||
+      !businessName ||
+      !businessType ||
+      !companynumber ||
+      !desiredServices ||
       !email ||
-      !phone ||
-      !companyname ||
-      !companytype ||
-      !companyaddress ||
-      !companynumber
+      !merchantCategoryCode ||
+      !merchantCategoryType ||
+      !name ||
+      !phone
     ) {
       return res.status(400).json({
         success: false,
@@ -38,12 +46,16 @@ const createCustomer = async (req, res) => {
     }
 
     const newCustomer = await Customer.create({
+      businessAddress,
+      businessIndustry,
+      businessName,
+      businessType,
+      desiredServices,
       name,
       email,
       phone,
-      companyname,
-      companytype,
-      companyaddress,
+      merchantCategoryCode,
+      merchantCategoryType,
       companynumber,
     });
 

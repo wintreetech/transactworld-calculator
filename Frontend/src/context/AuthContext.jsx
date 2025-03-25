@@ -1,4 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
+import { Customers } from "../components/admin";
 
 const AuthContext = createContext();
 
@@ -23,7 +24,11 @@ export const AuthProvider = ({ children }) => {
     return <h1>Loading...</h1>;
   }
 
-  return <AuthContext.Provider value={state}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ state, loading }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export default AuthContext;

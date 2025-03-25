@@ -10,6 +10,7 @@ import ProtectedRoutes from "./components/ProtectedRoutes";
 import Notfound from "./components/Notfound";
 import { Customers, Invoices, Quotes, Dashboard } from "./components/admin";
 import { AuthProvider } from "./context/AuthContext";
+import AppProvider from "./context/AppContext";
 
 // admin component
 
@@ -57,9 +58,9 @@ function App() {
 
   return (
     <>
-      <AuthProvider>
+      <AppProvider>
         <RouterProvider router={router} />
-      </AuthProvider>
+      </AppProvider>
     </>
   );
 }

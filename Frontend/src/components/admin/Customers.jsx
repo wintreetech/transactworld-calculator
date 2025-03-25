@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import axios from "axios";
 
 import { CustomersList } from "../admin";
 import {
@@ -6,8 +7,16 @@ import {
   businessIndustry,
   merchantCategoryType,
 } from "../../config";
+import toast from "react-hot-toast";
+import AuthContext from "../../context/AuthContext";
+import CustomerContext from "../../context/CustomerContext";
+
+const baseUrl = import.meta.env.VITE_BASE_URL;
+const apiUrl = import.meta.env.VITE_API_URL;
 
 function Customers() {
+  // const ctx = useContext(AuthContext);
+  const { customers, loading, addCustomer } = useContext(CustomerContext);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -16,7 +25,7 @@ function Customers() {
     businessType: "",
     businessIndustry: "",
     businessAddress: "",
-    companyNumber: "",
+    companynumber: "",
     desiredServices: [],
     merchantCategoryType: "",
     merchantCategoryCode: "",
@@ -31,12 +40,44 @@ function Customers() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleCustomerSubmit = (e) => {
+  const handleCustomerSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    for (const key in formData) {
+      const value = formData[key];
+
+      if (Array.isArray(value)) {
+        if (value.length === 0) {
+          toast("Please select at least one service.", {
+            duration: 3000,
+          });
+          return;
+        }
+      } else if (typeof value === "string" && value.trim() === "") {
+        toast("Please fill all the fields.", {
+          duration: 3000,
+        });
+        return;
+      }
+    }
+
+    try {
+      const response = await axios.post(
+        `${baseUrl}${apiUrl}/customer`,
+        formData
+      );
+      toast.success(response.data.message);
+      addCustomer(response.data.newCustomer);
+    } catch (error) {
+      console.error(error);
+      console.error(error.response.data.message);
+      toast.error(error.response.data.message);
+    }
+
+    // console.log(formData);
     document.getElementById("my_modal_3").close();
   };
 
@@ -58,7 +99,7 @@ function Customers() {
             className="btn text-base float-end tracking-wide"
             onClick={() => document.getElementById("my_modal_3").showModal()}
           >
-            Add Customers
+            Add Customer
           </button>
         </div>
         <dialog id="my_modal_3" className="modal">
@@ -98,6 +139,7 @@ function Customers() {
                   <input
                     type="tel"
                     name="phone"
+                    pattern="^\d{10}$"
                     value={formData.phone}
                     onChange={handleChange}
                     className="input"
@@ -129,11 +171,9 @@ function Customers() {
                   >
                     <option default>Select your business type</option>
                     {businessType.map((item, index) => (
-                      <>
-                        <option key={index} value={item.value}>
-                          {item.label}
-                        </option>
-                      </>
+                      <option key={index} value={item.value}>
+                        {item.label}
+                      </option>
                     ))}
                   </select>
                 </fieldset>
@@ -149,11 +189,9 @@ function Customers() {
                   >
                     <option default>Select your business industry</option>
                     {businessIndustry.map((item, index) => (
-                      <>
-                        <option key={index} value={item.value}>
-                          {item.label}
-                        </option>
-                      </>
+                      <option key={index} value={item.value}>
+                        {item.label}
+                      </option>
                     ))}
                   </select>
                 </fieldset>
@@ -176,8 +214,8 @@ function Customers() {
                   </legend>
                   <input
                     type="text"
-                    name="companyNumber"
-                    value={formData.companyNumber}
+                    name="companynumber"
+                    value={formData.companynumber}
                     onChange={handleChange}
                     className="input"
                     placeholder="987654321"
@@ -195,11 +233,9 @@ function Customers() {
                   >
                     <option default>Merchant Category Types</option>
                     {merchantCategoryType.map((item, index) => (
-                      <>
-                        <option key={index} value={item.value}>
-                          {item.label}
-                        </option>
-                      </>
+                      <option key={index} value={item.value}>
+                        {item.label}
+                      </option>
                     ))}
                   </select>
 
@@ -212,11 +248,9 @@ function Customers() {
                     >
                       <option default>Merchant Category Codes</option>
                       {merchantCategoryType.map((item, index) => (
-                        <>
-                          <option key={index} value={item.value}>
-                            {item.label}
-                          </option>
-                        </>
+                        <option key={index} value={item.value}>
+                          {item.label}
+                        </option>
                       ))}
                     </select>
                   )}
@@ -255,6 +289,7 @@ function Customers() {
           </div>
         </dialog>
       </div>
+
       <CustomersList />
     </>
   );

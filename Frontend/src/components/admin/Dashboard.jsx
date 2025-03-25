@@ -3,8 +3,8 @@ import AuthContext from "../../context/AuthContext";
 
 function Dashboard() {
   const ctx = useContext(AuthContext);
-  const userName = ctx.user?.username;
-  const role = ctx.user?.role;
+  const userName = ctx.state?.user?.username;
+  const role = ctx.state?.user?.role;
 
   return (
     <div>
