@@ -10,7 +10,7 @@ const invoiceSchema = new Schema(
       type: String,
       required: true,
       lowercase: true,
-      default: "demo",
+      required: true,
       unique: true,
     },
     invoiceentry: [

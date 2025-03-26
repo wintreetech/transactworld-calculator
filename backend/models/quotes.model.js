@@ -4,6 +4,7 @@ const QuotesSchema = Schema({
   customername: {
     type: String,
     required: [true, "Customer Name is Required for Quote"],
+    unique: true,
   },
   quotes: [
     {

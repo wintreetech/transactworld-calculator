@@ -1,6 +1,6 @@
+import mongoose from "mongoose";
 import Invoice from "../models/invoice.model.js";
 import invoiceCollection from "../models/invoices.model.js";
-import mongoose from "mongoose";
 
 // Create Invoice
 const createInvoice = async (req, res) => {
@@ -75,10 +75,41 @@ const getInvoices = async (req, res) => {
   }
 };
 
-// Get single Invoice For Customername and Invoicename
-const getInvoiceById = async (req, res) => {
+// Get all getInvoicesByCustomerName
+const getInvoicesByCustomerName = async (req, res) => {
+  const { customername } = req.query;
+
   try {
-    const { invoicename, customername } = req.body;
+    const invoicecollection = await invoiceCollection
+      .findOne({ customername })
+      .populate("invoices");
+
+    if (!invoicecollection) {
+      return res.status(404).json({
+        success: false,
+        message: `No invoices found for ${customername} `,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "invoices fetched successfully",
+      length: invoicecollection.length,
+      invoicecollection,
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// Get single Invoice For Customername and Invoicename
+const getInvoiceByCustomerNameandInvoiceName = async (req, res) => {
+  try {
+    const { invoicename, customername } = req.query;
     const customerhaveinvoices = await invoiceCollection
       .findOne({
         customername,
@@ -113,7 +144,8 @@ const getInvoiceById = async (req, res) => {
 // Update Single Invoice Entry By EntryID By Searching the InvoiceName
 const updateInvoiceEntry = async (req, res) => {
   try {
-    const { invoicename, entryId, updatedFields } = req.body;
+    const { invoicename, entryId } = req.query;
+    const { updatedFields } = req.body;
 
     if (!invoicename || !entryId || !updatedFields)
       return res.status(400).json({
@@ -151,7 +183,7 @@ const updateInvoiceEntry = async (req, res) => {
 // Delete Invoice By ID
 const deleteInvoice = async (req, res) => {
   try {
-    const { invoiceid } = req.body;
+    const { invoiceid } = req.query;
 
     if (!invoiceid) {
       return res.status(400).json({
@@ -201,7 +233,8 @@ const deleteInvoice = async (req, res) => {
 export {
   createInvoice,
   getInvoices,
-  getInvoiceById,
+  getInvoiceByCustomerNameandInvoiceName,
+  getInvoicesByCustomerName,
   updateInvoiceEntry,
   deleteInvoice,
 };

@@ -1,98 +1,40 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-// Sample invoice data
-const initialInvoices = [
-  {
-    id: 1,
-    cardType: "Visa",
-    issuingLocation: "USA",
-    IC: 0.5,
-    SC: 0.3,
-    transactions: 100,
-    volume: 5000,
-    currentRate: 0.59, // current rate (CR(%))
-    proposedRate: "", // proposed rate (PR(%)) as string for controlled input
-  },
-  {
-    id: 2,
-    cardType: "MasterCard",
-    issuingLocation: "UK",
-    IC: 0.4,
-    SC: 0.25,
-    transactions: 200,
-    volume: 10000,
-    currentRate: 0.92,
-    proposedRate: "",
-  },
-  {
-    id: 3,
-    cardType: "MasterCard",
-    issuingLocation: "UK",
-    IC: 0.4,
-    SC: 0.25,
-    transactions: 200,
-    volume: 10000,
-    currentRate: 0.92,
-    proposedRate: "",
-  },
-  {
-    id: 5,
-    cardType: "MasterCard",
-    issuingLocation: "UK",
-    IC: 0.4,
-    SC: 0.25,
-    transactions: 200,
-    volume: 10000,
-    currentRate: 0.92,
-    proposedRate: "",
-  },
-  {
-    id: 6,
-    cardType: "MasterCard",
-    issuingLocation: "UK",
-    IC: 0.4,
-    SC: 0.25,
-    transactions: 200,
-    volume: 10000,
-    currentRate: 0.92,
-    proposedRate: "",
-  },
-];
+function QuotesDetails({ selectedInvoiceData, handleInvoice, quotename }) {
+  const [invoices, setInvoices] = useState("");
 
-function QuotesDetails({ invoicename, customername }) {
-  const [invoiceEntryies, setInvoiceEntryies] = useState([]);
-  const [invoices, setInvoices] = useState(initialInvoices);
-  const [selectedInvoice, setSelectInvoice] = useState("");
+  useEffect(() => {
+    setInvoices(selectedInvoiceData);
+  }, [selectedInvoiceData]);
 
-  // Update invoice with the new proposed rate and recalc computed fees
-  const handleProposedRateChange = (id, value) => {
-    setInvoices((prevInvoices) => {
-      console.log(["prevInvoices", prevInvoices]);
-
-      prevInvoices.map((invoice) => {
-        if (invoice.id === id) {
-          // Try to convert the entered value to a number
-          const proposedRateNum = parseFloat(value);
-          const oldTotal = invoice.volume * invoice.currentRate;
-          const newTotal = !isNaN(proposedRateNum)
-            ? invoice.volume * proposedRateNum
-            : 0;
-          const savingMO = !isNaN(proposedRateNum) ? oldTotal - newTotal : 0;
-          const savingYY = savingMO * 12;
-
-          return {
-            ...invoice,
-            proposedRate: value, // store raw input (could be empty or non-numeric)
-            oldTotal,
-            newTotal,
-            savingMO,
-            savingYY,
-          };
-        }
-        return invoice;
-      });
+  const handleProposedRateChange = (entryid, value) => {
+    setInvoices((prevInvoice) => {
+      const updatedEntries = prevInvoice.invoiceentry?.map((entry) =>
+        entry._id === entryid
+          ? {
+              ...entry,
+              proposedrate: value,
+              oldtotal: entry.volume * entry.buyingrate,
+              newtotal: !isNaN(parseFloat(value))
+                ? entry.volume * parseFloat(value)
+                : 0,
+              savingMO:
+                entry.volume * entry.buyingrate -
+                (entry.volume * parseFloat(value) || 0),
+              savingYY:
+                (entry.volume * entry.buyingrate -
+                  (entry.volume * parseFloat(value) || 0)) *
+                12,
+            }
+          : entry
+      );
+      return { ...prevInvoice, invoiceentry: updatedEntries };
     });
   };
+
+  useEffect(() => {
+    handleInvoice(invoices);
+  }, [quotename]);
 
   return (
     <div className="overflow-x-hidden mb-4 rounded-box border border-base-content/5 bg-base-100 overflow-y-auto h-[calc(100vh-150px)]">
@@ -117,49 +59,57 @@ function QuotesDetails({ invoicename, customername }) {
         </thead>
         {/* Table Body */}
         <tbody>
-          {invoices.map((invoice, index) => (
-            <tr key={invoice.id}>
-              <td>{index + 1}</td>
-              <td>{invoice.cardType}</td>
-              <td>{invoice.issuingLocation}</td>
-              <td>{invoice.IC}</td>
-              <td>{invoice.SC}</td>
-              <td>{invoice.transactions}</td>
-              <td>{invoice.volume}</td>
-              <td>{invoice.currentRate}</td>
-              <td>
-                <input
-                  type="Number"
-                  value={invoice.proposedRate}
-                  onChange={(e) =>
-                    handleProposedRateChange(invoice.id, e.target.value)
-                  }
-                  className="input input-bordered w-[60px]"
-                  placeholder="0.00"
-                />
-              </td>
-              <td>
-                {invoice.oldTotal !== undefined
-                  ? invoice.oldTotal.toFixed(2)
-                  : "0.00"}
-              </td>
-              <td>
-                {invoice.newTotal !== undefined
-                  ? invoice.newTotal.toFixed(2)
-                  : "0.00"}
-              </td>
-              <td>
-                {invoice.savingMO !== undefined
-                  ? invoice.savingMO.toFixed(2)
-                  : "0.00"}
-              </td>
-              <td>
-                {invoice.savingYY !== undefined
-                  ? invoice.savingYY.toFixed(2)
-                  : "0.00"}
+          {invoices.invoiceentry?.length > 0 ? (
+            invoices.invoiceentry.map((invoice, index) => (
+              <tr key={invoice._id}>
+                <td>{index + 1}</td>
+                <td>{invoice.cardtype}</td>
+                <td>{invoice.issuinglocation}</td>
+                <td>{invoice.ixfee}</td>
+                <td>{invoice.scfee}</td>
+                <td>{invoice.transactions}</td>
+                <td>{invoice.volume}</td>
+                <td>{invoice.buyingrate}</td>
+                <td>
+                  <input
+                    type="Number"
+                    value={invoice.proposedrate || ""}
+                    onChange={(e) =>
+                      handleProposedRateChange(invoice._id, e.target.value)
+                    }
+                    className="input input-bordered w-[60px]"
+                    placeholder="0.00"
+                  />
+                </td>
+                <td>
+                  {invoice.oldtotal !== undefined
+                    ? invoice.oldtotal.toFixed(2)
+                    : "0.00"}
+                </td>
+                <td>
+                  {invoice.newtotal !== undefined
+                    ? invoice.newtotal.toFixed(2)
+                    : "0.00"}
+                </td>
+                <td>
+                  {invoice.savingMO !== undefined
+                    ? invoice.savingMO.toFixed(2)
+                    : "0.00"}
+                </td>
+                <td>
+                  {invoice.savingYY !== undefined
+                    ? invoice.savingYY.toFixed(2)
+                    : "0.00"}
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="13" className="text-center">
+                Please Select Invoice First.
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
     </div>

@@ -4,20 +4,18 @@ import quoteCollection from "../models/quotes.model.js";
 // Create Quote
 const createQuote = async (req, res) => {
   try {
-    const { customername, quotename, entries } = req.body;
+    const { customername, quotename, quoteentry } = req.body;
 
-    if (
-      Object.values(req.body).some((val) => val === undefined || val === "")
-    ) {
+    if (!customername || !quotename || !quoteentry) {
       return res
         .status(400)
         .json({ success: false, message: "All fields are required" });
     }
 
-    const newQuotes = await Quote.create({
+    const newQuote = await Quote.create({
       customername,
       quotename,
-      quoteentry: entries,
+      quoteentry: quoteentry,
     });
 
     let quotesCollectionCheck = await quoteCollection.findOne({ customername });
@@ -25,16 +23,17 @@ const createQuote = async (req, res) => {
     if (!quotesCollectionCheck) {
       quotesCollectionCheck = await quoteCollection.create({
         customername,
-        quotes: [newQuotes._id],
+        quotes: [newQuote._id],
       });
     } else {
-      quotesCollectionCheck.quotes.push(newQuotes._id);
+      quotesCollectionCheck.quotes.push(newQuote._id);
+      await quotesCollectionCheck.save();
     }
 
     res.status(201).json({
       success: true,
       message: "Quotes created and linked to customer successfully",
-      quote: newQuotes,
+      quote: newQuote,
     });
   } catch (error) {
     console.error(error);

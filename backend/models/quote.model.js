@@ -5,7 +5,6 @@ const quoteSchema = new Schema(
     customername: {
       type: String,
       required: [true, "customer name is required"],
-      unique: true,
     },
     quotename: {
       type: String,
