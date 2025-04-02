@@ -31,7 +31,7 @@ export const CustomerProvider = ({ children }) => {
   // Add the customer to the state
   const addCustomer = (newCustomer) => {
     setCustomers((prevState) => [...prevState, newCustomer]);
-    console.log("customer added in the context", newCustomer);
+    // console.log("customer added in the context", newCustomer);
   };
 
   return (

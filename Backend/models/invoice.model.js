@@ -15,19 +15,19 @@ const invoiceSchema = new Schema(
     },
     invoiceentry: [
       {
-        cardtype: {
+        cardType: {
           type: String,
           required: true,
         },
-        issuinglocation: {
+        issuingLocation: {
           type: String,
           required: true,
         },
-        ixfee: {
+        interchangeFees: {
           type: Number,
           required: true,
         },
-        scfee: {
+        schemeFees: {
           type: Number,
           required: true,
         },
@@ -35,15 +35,15 @@ const invoiceSchema = new Schema(
           type: Number,
           required: true,
         },
-        volume: {
+        transactionVolume: {
           type: Number,
           required: true,
         },
-        buyingrate: {
+        buyingRate: {
           type: Number,
           required: true,
         },
-        totalprice: {
+        total: {
           type: Number,
           required: true,
           default: 0,

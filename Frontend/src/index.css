@@ -9,3 +9,12 @@
   --font-script: "Style Script", serif;
   /* --font-script: "Montserrat", sans-serif; */
 }
+
+.success {
+  background-color: #86efac;
+}
+
+.success:hover {
+  background-color: #22c55e;
+  color: white;
+}

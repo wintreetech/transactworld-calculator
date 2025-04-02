@@ -31,7 +31,10 @@ const createInvoice = async (req, res) => {
         invoices: [newInvoice._id],
       });
     } else {
-      invoiceCollection.invoices.push(newInvoice._id);
+      // invoiceCollection.invoices.push(newInvoice._id);
+      invoiceCollectionCheck.invoices.push(newInvoice._id);
+
+      await invoiceCollectionCheck.save();
     }
 
     res.status(201).json({

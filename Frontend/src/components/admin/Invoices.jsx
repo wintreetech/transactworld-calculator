@@ -1,6 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import InvoiceDetails from "./InvoiceDetails";
 import toast from "react-hot-toast";
+import CustomerContext from "../../context/CustomerContext";
+import InvoiceContext from "../../context/InvoiceContext";
+import { LuSave } from "react-icons/lu";
+import { IoMdAdd } from "react-icons/io";
+import { useLocation, useNavigate } from "react-router-dom";
 
 let calculateFees = (formData) => {
   const interchangeRates = {
@@ -68,16 +73,31 @@ function Invoices() {
     total: 0,
   });
 
+  const location = useLocation();
+
+  const { customers } = useContext(CustomerContext);
+  const { addInvoice } = useContext(InvoiceContext);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "customer") {
       setCustomer(value);
+      console.log("value", value);
     } else {
       setCurrentEntry((prev) => ({
         ...prev,
         [name]: value,
       }));
     }
+  };
+
+  const openModal = () => {
+    if (!customer || customer === "Select your customer") {
+      toast("Please select a customer, before adding an invoice entry.");
+      return; // Prevent modal from opening if no customer is selected
+    }
+    console.log("modal opened");
+    document.getElementById("my_modal_3").showModal();
   };
 
   const result = useMemo(
@@ -99,8 +119,41 @@ function Invoices() {
     }));
   }, [result]);
 
+  // Add confirmation for page unload or reload
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      if (invoiceEntries.length > 0) {
+        const message =
+          "The entries you have added will be removed, please save before leaving";
+        event.returnValue = message;
+        return message;
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    if (location.pathname !== "/admin/invoices") {
+      console.log("route changed");
+    }
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [invoiceEntries, location]);
+
   const addEntry = (e) => {
     e.preventDefault();
+    if (
+      !currentEntry.cardType ||
+      !currentEntry.issuingLocation ||
+      !currentEntry.transactions ||
+      !currentEntry.transactionVolume ||
+      !currentEntry.buyingRate
+    ) {
+      // Show toast message if fields are empty
+      toast("Please fill all the fields.");
+      return; // Stop further execution
+    }
     setInvoiceEntries((prev) => [...prev, { ...currentEntry }]);
     setCurrentEntry({
       cardType: "",
@@ -112,16 +165,37 @@ function Invoices() {
       buyingRate: "",
       total: 0,
     });
-    //document.getElementById("my_modal_3").close();
+    // console.log("entries", currentEntry);
+    document.getElementById("my_modal_3").close();
   };
 
   const saveInvoice = () => {
-    toast.success("save invoice succesfully");
-    console.log("save invoice", {
-      customer,
-      invoiceName,
-      invoiceEntries: invoiceEntries,
-    });
+    if (
+      !customer ||
+      !invoiceName ||
+      !invoiceEntries ||
+      !invoiceEntries.length === 0
+    ) {
+      toast("Please fill in all fields.");
+      console.log("invoice Entries", invoiceEntries);
+      return;
+    }
+
+    // console.log("save invoice", {
+    //   customer,
+    //   invoiceName,
+    //   invoiceEntries: invoiceEntries,
+    // });
+
+    const invoiceData = {
+      customername: customer,
+      invoicename: invoiceName,
+      entries: invoiceEntries,
+    };
+
+    addInvoice(invoiceData);
+
+    setInvoiceEntries([]);
   };
 
   return (
@@ -137,25 +211,29 @@ function Invoices() {
           className="select"
         >
           <option default>Select your customer</option>
-          <option value="Shubham Makwana">Shubham Makwana</option>
-          <option value="Alice Johnson">Alice Johnson</option>
-          <option value="Bob Smith">Bob Smith</option>
-          <option value="Carol White">Carol White</option>
+          {customers.map((customer, index) => {
+            return (
+              <option key={index} value={customer.name}>
+                {customer.name}
+              </option>
+            );
+          })}
         </select>
 
         <div className="flex gap-2">
-          <button
-            className="btn text-base tracking-wide"
-            onClick={() => document.getElementById("my_modal_3").showModal()}
-          >
+          <button className="btn text-base tracking-wide" onClick={openModal}>
+            <IoMdAdd />
             Add Invoice Entry
           </button>
-          <button
-            className="btn text-base tracking-wide"
-            onClick={() => document.getElementById("my_modal_5").showModal()}
-          >
-            Save Invoice
-          </button>
+          {invoiceEntries.length !== 0 ? (
+            <button
+              className="btn success text-base tracking-wide"
+              onClick={() => document.getElementById("my_modal_5").showModal()}
+            >
+              <LuSave />
+              Save Invoice
+            </button>
+          ) : null}
         </div>
 
         <dialog id="my_modal_3" className="modal">
@@ -214,6 +292,8 @@ function Invoices() {
                     onChange={handleChange}
                     className="input"
                     placeholder="Enter number of transactions"
+                    min={0}
+                    required
                   />
                 </fieldset>
 
@@ -229,6 +309,8 @@ function Invoices() {
                     onChange={handleChange}
                     className="input"
                     placeholder="Enter transaction volume"
+                    min={0}
+                    required
                   />
                 </fieldset>
 
@@ -244,19 +326,22 @@ function Invoices() {
                     onChange={handleChange}
                     className="input"
                     placeholder="Enter current buying rate"
+                    min={0}
+                    step={0.1}
+                    required
                   />
                 </fieldset>
               </div>
               <button type="submit" className="btn absolute right-8 bottom-8">
                 Add Invoice Entry
               </button>
-              <button
-                onClick={() => document.getElementById("my_modal_3").close()}
-                className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-              >
-                ✕
-              </button>
             </form>
+            <button
+              onClick={() => document.getElementById("my_modal_3").close()}
+              className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            >
+              ✕
+            </button>
           </div>
         </dialog>
         <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
@@ -284,6 +369,7 @@ function Invoices() {
                 type="text"
                 className="grow"
                 placeholder="example"
+                required
               />
             </label>
             <div className="modal-action">

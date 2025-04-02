@@ -10,6 +10,7 @@ import {
 import toast from "react-hot-toast";
 import AuthContext from "../../context/AuthContext";
 import CustomerContext from "../../context/CustomerContext";
+import { IoMdAdd } from "react-icons/io";
 
 const baseUrl = import.meta.env.VITE_BASE_URL;
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -99,6 +100,7 @@ function Customers() {
             className="btn text-base float-end tracking-wide"
             onClick={() => document.getElementById("my_modal_3").showModal()}
           >
+            <IoMdAdd />
             Add Customer
           </button>
         </div>

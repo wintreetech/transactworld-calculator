@@ -1,11 +1,14 @@
 import React from "react";
 import { AuthProvider } from "./AuthContext";
 import { CustomerProvider } from "./CustomerContext";
+import { InvoiceProvider } from "./InvoiceContext";
 
 const AppProvider = ({ children }) => {
   return (
     <AuthProvider>
-      <CustomerProvider>{children}</CustomerProvider>
+      <CustomerProvider>
+        <InvoiceProvider>{children}</InvoiceProvider>
+      </CustomerProvider>
     </AuthProvider>
   );
 };

@@ -21,6 +21,16 @@ function ProtectedRoutes({ children }) {
         if (token) {
           const decodeToken = jwtDecode(token);
 
+          const currentTime = Date.now() / 1000;
+
+          if (decodeToken.exp && decodeToken.exp < currentTime) {
+            setIsAuthenticated(false);
+            toast.error("Session expired. Please login again.");
+            localStorage.removeItem("user");
+            setLoading(false);
+            return;
+          }
+
           if (decodeToken) {
             setIsAuthenticated(true);
             setRole(user.role);

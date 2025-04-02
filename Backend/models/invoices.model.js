@@ -5,7 +5,7 @@ const invoicesSchema = new Schema(
     customername: {
       type: String,
       required: true,
-      lowercase: true,
+      // lowercase: true,
     },
     invoices: [
       {

@@ -9,7 +9,6 @@ import Auth from "./components/auth/Auth";
 import ProtectedRoutes from "./components/ProtectedRoutes";
 import Notfound from "./components/Notfound";
 import { Customers, Invoices, Quotes, Dashboard } from "./components/admin";
-import { AuthProvider } from "./context/AuthContext";
 import AppProvider from "./context/AppContext";
 
 // admin component

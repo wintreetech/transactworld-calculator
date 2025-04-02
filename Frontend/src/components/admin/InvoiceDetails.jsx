@@ -50,7 +50,9 @@ function InvoiceDetails({ invoiceEntries }) {
             </tbody>
           </table>
         ) : (
-          <h1 className="text-center text-2xl mt-10">No Invoice Entry Found</h1>
+          <h1 className="text-center text-2xl mt-10">
+            No Invoice Entries Added
+          </h1>
         )}
       </div>
     </>
