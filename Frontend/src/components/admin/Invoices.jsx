@@ -82,7 +82,6 @@ function Invoices() {
     const { name, value } = e.target;
     if (name === "customer") {
       setCustomer(value);
-      console.log("value", value);
     } else {
       setCurrentEntry((prev) => ({
         ...prev,
@@ -96,7 +95,6 @@ function Invoices() {
       toast("Please select a customer, before adding an invoice entry.");
       return; // Prevent modal from opening if no customer is selected
     }
-    console.log("modal opened");
     document.getElementById("my_modal_3").showModal();
   };
 
@@ -165,7 +163,6 @@ function Invoices() {
       buyingRate: "",
       total: 0,
     });
-    // console.log("entries", currentEntry);
     document.getElementById("my_modal_3").close();
   };
 
@@ -177,15 +174,8 @@ function Invoices() {
       !invoiceEntries.length === 0
     ) {
       toast("Please fill in all fields.");
-      console.log("invoice Entries", invoiceEntries);
       return;
     }
-
-    // console.log("save invoice", {
-    //   customer,
-    //   invoiceName,
-    //   invoiceEntries: invoiceEntries,
-    // });
 
     const invoiceData = {
       customername: customer,

@@ -1,11 +1,10 @@
-import { Schema, Model } from "express";
+import { Schema, model } from "mongoose";
 
 const quoteSchema = new Schema(
   {
     customername: {
       type: String,
       required: [true, "customer name is required"],
-      unique: true,
     },
     quotename: {
       type: String,
@@ -13,19 +12,19 @@ const quoteSchema = new Schema(
     },
     quoteentry: [
       {
-        cardtype: {
+        cardType: {
           type: String,
           required: true,
         },
-        issuinglocation: {
+        issuingLocation: {
           type: String,
           required: true,
         },
-        ixfee: {
+        interchangeFees: {
           type: String,
           required: true,
         },
-        scfee: {
+        schemeFees: {
           type: String,
           required: true,
         },
@@ -33,11 +32,11 @@ const quoteSchema = new Schema(
           type: Number,
           required: true,
         },
-        volume: {
+        transactionVolume: {
           type: Number,
           required: true,
         },
-        buyingrate: {
+        buyingRate: {
           type: Number,
           required: true,
         },

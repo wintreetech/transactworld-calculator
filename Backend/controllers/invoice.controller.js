@@ -78,11 +78,45 @@ const getInvoices = async (req, res) => {
   }
 };
 
-// Get single Invoice For Customername and Invoicename
-const getInvoiceById = async (req, res) => {
-  const { invoicename, customername } = req.body;
+// Get all getInvoicesByCustomerName
+const getInvoicesByCustomerName = async (req, res) => {
+  const { customername } = req.query;
 
   try {
+    const invoicecollection = await invoiceCollection
+      .findOne({ customername })
+      .populate("invoices");
+
+    if (!invoicecollection) {
+      return res.status(404).json({
+        success: false,
+        message: `No invoices found for ${customername} `,
+      });
+    }
+
+    const invoicenames = invoicecollection.invoices.map(
+      (invoice) => invoice.invoicename
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "invoices fetched successfully",
+      length: invoicecollection.length,
+      invoicenames,
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// Get single Invoice For Customername and Invoicename
+const getInvoiceByCustomerNameandInvoiceName = async (req, res) => {
+  try {
+    const { invoicename, customername } = req.query;
     const customerhaveinvoices = await invoiceCollection
       .findOne({
         customername,
@@ -113,6 +147,42 @@ const getInvoiceById = async (req, res) => {
     });
   }
 };
+
+// Get single Invoice For Customername and Invoicename
+// const getInvoiceById = async (req, res) => {
+//   const { invoicename, customername } = req.body;
+
+//   try {
+//     const customerhaveinvoices = await invoiceCollection
+//       .findOne({
+//         customername,
+//       })
+//       .populate("invoices");
+
+//     if (!customerhaveinvoices) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Customer not found",
+//       });
+//     }
+
+//     const invoiceData = customerhaveinvoices.invoices.find(
+//       (inv) => inv.invoicename === invoicename
+//     );
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Invoice fetched successfully",
+//       invoice: invoiceData,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(400).json({
+//       success: false,
+//       message: error.message,
+//     });
+//   }
+// };
 
 // Update Single Invoice Entry By EntryID By Searching the InvoiceName
 const updateInvoiceEntry = async (req, res) => {
@@ -205,7 +275,9 @@ const deleteInvoice = async (req, res) => {
 export {
   createInvoice,
   getInvoices,
-  getInvoiceById,
+  // getInvoiceById,
+  getInvoicesByCustomerName,
+  getInvoiceByCustomerNameandInvoiceName,
   updateInvoiceEntry,
   deleteInvoice,
 };

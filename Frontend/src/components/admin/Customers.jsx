@@ -78,7 +78,6 @@ function Customers() {
       toast.error(error.response.data.message);
     }
 
-    // console.log(formData);
     document.getElementById("my_modal_3").close();
   };
 

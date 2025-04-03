@@ -69,8 +69,91 @@ export const businessType = [
 ];
 
 export const merchantCategoryType = [
-  { value: "0001–1499", label: "0001–1499 (Agricultural Services)" },
-  { value: "1500–2999", label: "1500–2999 (Contracted Services)" },
+  {
+    value: "0001–1499",
+    label: "0001–1499 (Agricultural Services)",
+    mccCodes: [
+      {
+        MCC: "0742",
+        Description: "Veterinary Services",
+        ValidPaymentBrands: ["V", "M"],
+      },
+      {
+        MCC: "0763",
+        Description: "Agricultural Cooperatives",
+        ValidPaymentBrands: ["V", "M"],
+      },
+      {
+        MCC: "0780",
+        Description: "Horticultural and Landscaping Services",
+        ValidPaymentBrands: ["V", "M"],
+      },
+    ],
+  },
+  {
+    value: "1500–2999",
+    label: "1500–2999 (Contracted Services)",
+    mccCodes: [
+      {
+        MCC: "1520",
+        Description: "General Contractors–Residential and Commercial",
+        ValidPaymentBrands: ["V", "M"],
+      },
+      {
+        MCC: "1711",
+        Description: "Air Conditioning, Heating and Plumbing Contractors",
+        ValidPaymentBrands: ["V", "M"],
+      },
+      {
+        MCC: "1731",
+        Description: "Electrical Contractors",
+        ValidPaymentBrands: ["V", "M"],
+      },
+      {
+        MCC: "1740",
+        Description:
+          "Insulation, Masonry, Plastering, Stonework and Tile Setting Contractors",
+        ValidPaymentBrands: ["V", "M"],
+      },
+      {
+        MCC: "1750",
+        Description: "Carpentry Contractors",
+        ValidPaymentBrands: ["V", "M"],
+      },
+      {
+        MCC: "1761",
+        Description: "Roofing and Siding, Sheet Metal Work Contractors",
+        ValidPaymentBrands: ["V", "M"],
+      },
+      {
+        MCC: "1771",
+        Description: "Concrete Work Contractors",
+        ValidPaymentBrands: ["V", "M"],
+      },
+      {
+        MCC: "1799",
+        Description:
+          "Contractors, Special Trade Contractors–not elsewhere classified",
+        ValidPaymentBrands: ["V", "M"],
+      },
+      {
+        MCC: "2741",
+        Description: "Miscellaneous Publishing and Printing",
+        ValidPaymentBrands: ["V", "M"],
+      },
+      {
+        MCC: "2791",
+        Description: "Typesetting, Plate Making and Related Services",
+        ValidPaymentBrands: ["V", "M"],
+      },
+      {
+        MCC: "2842",
+        Description:
+          "Sanitation, Polishing and Specialty Cleaning Preparations",
+        ValidPaymentBrands: ["V", "M"],
+      },
+    ],
+  },
   { value: "3000–3299", label: "3000–3299 (Airlines)" },
   { value: "3300–3499", label: "3300–3499 (Car Rental)" },
   { value: "3500–3999", label: "3500–3999 (Lodging)" },
@@ -88,7 +171,10 @@ export const merchantCategoryType = [
 ];
 
 const merchantCategoryCode = [
-  { value: "0001–1499", label: "0001–1499 (Agricultural Services)" },
+  {
+    value: "0001–1499",
+    label: "0001–1499 (Agricultural Services)",
+  },
   { value: "1500–2999", label: "1500–2999 (Contracted Services)" },
   { value: "3000–3299", label: "3000–3299 (Airlines)" },
   { value: "3300–3499", label: "3300–3499 (Car Rental)" },

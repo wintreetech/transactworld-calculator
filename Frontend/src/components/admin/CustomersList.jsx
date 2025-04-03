@@ -1,9 +1,6 @@
 import React, { useContext } from "react";
 import CustomerContext from "../../context/CustomerContext";
 
-// const baseUrl = import.meta.env.VITE_BASE_URL;
-// const apiUrl = import.meta.env.VITE_API_URL;
-
 function CustomersList() {
   const { customers, loading } = useContext(CustomerContext);
 
