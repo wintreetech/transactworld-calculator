@@ -76,9 +76,10 @@ function Sidebar() {
           ></label>
 
           <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-6">
-            <h1 className="text-3xl mb-8 text-center font-script">
+            {/* <h1 className="text-3xl mb-8 text-center font-script">
               TransactWorld UK
-            </h1>
+            </h1> */}
+            <img src="src/assets/TWUKLogo.png" alt="logo" />
             <hr className="border-gray-300 mb-8" />
             {MenuItem.map((item) => {
               return (
