@@ -30,7 +30,7 @@ const handleAuthRequest = async (data, type) => {
 
 function Auth() {
   const ctx = useContext(AuthContext);
-  const user = ctx.user;
+  const user = ctx?.state?.user;
 
   const navigate = useNavigate();
   const [registerForm, setRegisterForm] = useState({
@@ -79,6 +79,7 @@ function Auth() {
   useEffect(() => {
     if (user && user.role === "admin") {
       navigate("/admin");
+      console.log("user :", user);
     } else if (user && user.role === "user") {
       navigate("/");
     }
