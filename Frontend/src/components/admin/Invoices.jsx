@@ -283,6 +283,7 @@ function Invoices() {
                     className="input"
                     placeholder="Enter number of transactions"
                     min={0}
+                    step={0.01}
                     required
                   />
                 </fieldset>
@@ -317,7 +318,7 @@ function Invoices() {
                     className="input"
                     placeholder="Enter current buying rate"
                     min={0}
-                    step={0.1}
+                    step={0.01}
                     required
                   />
                 </fieldset>
