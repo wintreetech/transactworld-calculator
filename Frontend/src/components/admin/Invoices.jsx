@@ -300,6 +300,7 @@ function Invoices() {
                     onChange={handleChange}
                     className="input"
                     placeholder="Enter transaction volume"
+                    step={0.01}
                     min={0}
                     required
                   />
