@@ -96,6 +96,7 @@ export const InvoiceProvider = ({ children }) => {
         singleInvoiceData,
         loading,
         setInvoicesData,
+        setSingleInvoiceData,
       }}
     >
       {children}

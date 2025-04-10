@@ -24,6 +24,7 @@ function Quotes() {
     fetchInvoiceData,
     singleInvoiceData,
     setInvoicesData,
+    setSingleInvoiceData,
   } = useContext(InvoiceContext);
 
   const { savedQuote } = useContext(QuoteContext);
@@ -35,6 +36,7 @@ function Quotes() {
     if (name === "customername") {
       setSelectedInvoice("");
       setInvoicesData([]);
+      setSingleInvoiceData("");
     }
 
     if (formData.quotename === "") {
