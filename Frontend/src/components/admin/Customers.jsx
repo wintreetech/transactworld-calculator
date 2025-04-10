@@ -30,14 +30,6 @@ function Customers() {
     merchantCategoryCode: "",
   });
 
-  useEffect(() => {
-    console.log(
-      "formData",
-      formData.merchantCategoryType,
-      formData.merchantCategoryCode
-    );
-  }, [formData.merchantCategoryType, formData.merchantCategoryCode]);
-
   const services = [
     "Payment Gateway for online payments",
     "Link Payments",

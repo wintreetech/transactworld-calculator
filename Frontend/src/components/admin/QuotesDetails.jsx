@@ -8,26 +8,42 @@ function QuotesDetails({ selectedInvoiceData, handleInvoice, quotename }) {
   }, [selectedInvoiceData]);
 
   const handleProposedRateChange = (entryid, value) => {
+    const parsedValue = parseFloat(value);
+
     setInvoices((prevInvoice) => {
-      const updatedEntries = prevInvoice.invoiceentry?.map((entry) =>
-        entry._id === entryid
-          ? {
-              ...entry,
-              proposedrate: value,
-              oldtotal: entry.transactionVolume * entry.buyingRate,
-              newtotal: !isNaN(parseFloat(value))
-                ? entry.transactionVolume * parseFloat(value)
-                : 0,
-              savingMO:
-                entry.transactionVolume * entry.buyingRate -
-                (entry.transactionVolume * parseFloat(value) || 0),
-              savingYY:
-                (entry.transactionVolume * entry.buyingRate -
-                  (entry.transactionVolume * parseFloat(value) || 0)) *
-                12,
-            }
-          : entry
-      );
+      const updatedEntries = prevInvoice.invoiceentry?.map((entry) => {
+        if (entry._id !== entryid) return entry;
+
+        // If input is cleared or invalid, reset all values
+        if (value === "" || isNaN(parsedValue)) {
+          return {
+            ...entry,
+            proposedrate: "",
+            oldtotal: 0,
+            newtotal: 0,
+            savingMO: 0,
+            savingYY: 0,
+          };
+        }
+
+        const transactionVolume = entry.transactionVolume;
+
+        const oldtotal = transactionVolume * parsedValue;
+        const newtotal = oldtotal;
+
+        const buyingTotal = transactionVolume * entry.buyingRate;
+        const savingMO = buyingTotal - newtotal;
+        const savingYY = savingMO * 12;
+
+        return {
+          ...entry,
+          proposedrate: parsedValue,
+          oldtotal,
+          newtotal,
+          savingMO,
+          savingYY,
+        };
+      });
 
       return { ...prevInvoice, invoiceentry: updatedEntries };
     });

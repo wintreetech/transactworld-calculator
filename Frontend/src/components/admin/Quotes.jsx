@@ -14,15 +14,16 @@ function Quotes() {
   });
 
   const [selectedInvoice, setSelectedInvoice] = useState("");
-
   const [invoiceData, setInvoiceData] = useState("");
 
+  // context
   const { customers } = useContext(CustomerContext);
   const {
     fetchAllCustomerInvoice,
     invoicesData,
     fetchInvoiceData,
     singleInvoiceData,
+    setInvoicesData,
   } = useContext(InvoiceContext);
 
   const { savedQuote } = useContext(QuoteContext);
@@ -30,6 +31,12 @@ function Quotes() {
   const handleChange = (e) => {
     const { value, name } = e.target;
     setFormData({ ...formData, [name]: value });
+
+    if (name === "customername") {
+      setSelectedInvoice("");
+      setInvoicesData([]);
+    }
+
     if (formData.quotename === "") {
       fetchAllCustomerInvoice(value);
     }
