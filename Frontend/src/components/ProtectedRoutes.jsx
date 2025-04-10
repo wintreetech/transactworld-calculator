@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 
 function ProtectedRoutes({ children }) {
   const ctx = useContext(AuthContext);
+
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [role, setRole] = useState(null);

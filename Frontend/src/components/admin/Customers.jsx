@@ -1,14 +1,12 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
-
 import { CustomersList } from "../admin";
 import {
   businessType,
   businessIndustry,
-  merchantCategoryType,
+  merchantCategoryTypeWithCode,
 } from "../../config";
 import toast from "react-hot-toast";
-import AuthContext from "../../context/AuthContext";
 import CustomerContext from "../../context/CustomerContext";
 import { IoMdAdd } from "react-icons/io";
 
@@ -31,6 +29,14 @@ function Customers() {
     merchantCategoryType: "",
     merchantCategoryCode: "",
   });
+
+  useEffect(() => {
+    console.log(
+      "formData",
+      formData.merchantCategoryType,
+      formData.merchantCategoryCode
+    );
+  }, [formData.merchantCategoryType, formData.merchantCategoryCode]);
 
   const services = [
     "Payment Gateway for online payments",
@@ -222,6 +228,8 @@ function Customers() {
                     placeholder="987654321"
                   />
                 </fieldset>
+
+                {/* MCC Code  */}
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend text-sm font-medium">
                     What is your MCC?
@@ -233,7 +241,7 @@ function Customers() {
                     className="select"
                   >
                     <option default>Merchant Category Types</option>
-                    {merchantCategoryType.map((item, index) => (
+                    {merchantCategoryTypeWithCode.map((item, index) => (
                       <option key={index} value={item.value}>
                         {item.label}
                       </option>
@@ -248,11 +256,15 @@ function Customers() {
                       className="select"
                     >
                       <option default>Merchant Category Codes</option>
-                      {merchantCategoryType.map((item, index) => (
-                        <option key={index} value={item.value}>
-                          {item.label}
-                        </option>
-                      ))}
+                      {merchantCategoryTypeWithCode
+                        .find(
+                          (cat) => cat.value === formData.merchantCategoryType
+                        )
+                        ?.mccCodes?.map((code, index) => (
+                          <option key={index} value={code.MCC}>
+                            {code.MCC} - {code.Description}
+                          </option>
+                        ))}
                     </select>
                   )}
                 </fieldset>
