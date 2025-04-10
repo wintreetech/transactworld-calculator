@@ -28,6 +28,7 @@ function QuotesDetails({ selectedInvoiceData, handleInvoice, quotename }) {
             }
           : entry
       );
+
       return { ...prevInvoice, invoiceentry: updatedEntries };
     });
   };

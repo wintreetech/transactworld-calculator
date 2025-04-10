@@ -87,7 +87,9 @@ function Sidebar() {
                   key={item.id}
                   to={`${item.path}`}
                   className={`flex gap-3 px-4 py-3 capitalize hover:bg-gray-100 ${
-                    location.pathname === `${item.path}` ? "bg-base-100" : ""
+                    location.pathname === `${item.path}`
+                      ? "bg-base-100 border-l-4 border-Charcoal-gray"
+                      : ""
                   } mb-3 text-lg rounded-lg`}
                 >
                   {/* <img src={item.icon} alt={item.name} width={28} height={28} /> */}

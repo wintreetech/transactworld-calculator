@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import AuthContext from "../../context/AuthContext";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const baseUrl = import.meta.env.VITE_BASE_URL;
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -39,10 +40,17 @@ function Auth() {
     password: "",
   });
 
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
   const [loginForm, setLoginForm] = useState({
     email: "",
     password: "",
   });
+
+  // Function to toggle visibility
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible((prev) => !prev);
+  };
 
   const changeAuthHandler = (e, type) => {
     const { name, value } = e.target;
@@ -258,7 +266,8 @@ function Auth() {
                 </g>
               </svg>
               <input
-                type="password"
+                // type="password"
+                type={isPasswordVisible ? "text" : "password"}
                 name="password"
                 value={loginForm.password}
                 onChange={(e) => changeAuthHandler(e, "login")}
@@ -268,6 +277,19 @@ function Auth() {
                 pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                 title="Must be more than 8 characters, including number, lowercase letter, uppercase letter"
               />
+              <div
+                onClick={togglePasswordVisibility}
+                className="cursor-pointer"
+              >
+                {/* <FaEye size={24} /> */}
+                {/* <FaEyeSlash size={24} /> */}
+                {/* {isPasswordVisible ? "Hide" : "Show"} Password */}
+                {isPasswordVisible ? (
+                  <FaEyeSlash size={24} />
+                ) : (
+                  <FaEye size={24} />
+                )}
+              </div>
             </label>
             <button type="submit" className="btn w-full">
               Login
