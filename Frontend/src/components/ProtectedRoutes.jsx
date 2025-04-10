@@ -46,6 +46,8 @@ function ProtectedRoutes({ children }) {
         setIsAuthenticated(false);
         toast.error("Something went wrong");
       }
+    } else {
+      setIsAuthenticated(false);
     }
     setLoading(false);
   }, []);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AiOutlineDashboard } from "react-icons/ai";
 import { FaRegUser } from "react-icons/fa";
@@ -8,6 +8,7 @@ import { FiPenTool } from "react-icons/fi";
 import { RxHamburgerMenu } from "react-icons/rx";
 import axios from "axios";
 import toast from "react-hot-toast";
+import AuthContext from "../../context/AuthContext";
 
 function Sidebar() {
   const location = useLocation();
@@ -40,22 +41,12 @@ function Sidebar() {
     },
   ];
 
-  const baseUrl = import.meta.env.VITE_BASE_URL;
-  const apiUrl = import.meta.env.VITE_API_URL;
+  const { handleLogoutUser } = useContext(AuthContext);
 
   const handleLogout = async () => {
-    try {
-      const response = await axios.post(`${baseUrl}${apiUrl}/auth/logout`);
-
-      localStorage.removeItem("user");
-
-      const message = response.data.message;
-      toast.success(message);
-
-      navigate("/auth");
-    } catch (error) {
-      console.error("logout error", error);
-    }
+    const response = await handleLogoutUser();
+    if (response === "OK") console.log("user log out", response);
+    navigate("/auth");
   };
 
   return (

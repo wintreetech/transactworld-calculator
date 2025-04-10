@@ -85,11 +85,21 @@ function Auth() {
   };
 
   useEffect(() => {
-    if (user && user.role === "admin") {
-      navigate("/admin");
-      console.log("user :", user);
-    } else if (user && user.role === "user") {
-      navigate("/");
+    if (user) {
+      if (
+        user &&
+        user.role === "admin" &&
+        window.location.pathname !== "/admin"
+      ) {
+        navigate("/admin");
+        console.log("user :", user);
+      } else if (
+        user &&
+        user.role === "user" &&
+        window.location.pathname !== "/"
+      ) {
+        navigate("/");
+      }
     }
   }, [user, navigate]);
 
