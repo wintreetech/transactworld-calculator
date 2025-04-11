@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true); // Track loading state
 
   const handleAuthRequest = async (data, type) => {
+    setLoading(true);
     try {
       const endpoint = type === "register" ? "/register" : "/login";
       const response = await axios.post(

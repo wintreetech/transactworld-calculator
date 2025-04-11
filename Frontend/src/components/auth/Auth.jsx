@@ -168,7 +168,7 @@ function Auth() {
                 </g>
               </svg>
               <input
-                type="password"
+                type={isPasswordVisible ? "text" : "password"}
                 name="password"
                 value={registerForm.password}
                 onChange={(e) => changeAuthHandler(e, "register")}
@@ -178,6 +178,16 @@ function Auth() {
                 pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                 title="Must be more than 8 characters, including number, lowercase letter, uppercase letter"
               />
+              <div
+                onClick={togglePasswordVisibility}
+                className="cursor-pointer"
+              >
+                {isPasswordVisible ? (
+                  <FaEyeSlash size={24} />
+                ) : (
+                  <FaEye size={24} />
+                )}
+              </div>
             </label>
             <button type="submit" className="btn w-full">
               Register
@@ -263,9 +273,6 @@ function Auth() {
                 onClick={togglePasswordVisibility}
                 className="cursor-pointer"
               >
-                {/* <FaEye size={24} /> */}
-                {/* <FaEyeSlash size={24} /> */}
-                {/* {isPasswordVisible ? "Hide" : "Show"} Password */}
                 {isPasswordVisible ? (
                   <FaEyeSlash size={24} />
                 ) : (
