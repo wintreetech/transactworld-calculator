@@ -6,8 +6,6 @@ import { TbFileInvoice } from "react-icons/tb";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { FiPenTool } from "react-icons/fi";
 import { RxHamburgerMenu } from "react-icons/rx";
-import axios from "axios";
-import toast from "react-hot-toast";
 import AuthContext from "../../context/AuthContext";
 
 function Sidebar() {
@@ -44,10 +42,13 @@ function Sidebar() {
   const { handleLogoutUser } = useContext(AuthContext);
 
   const handleLogout = async () => {
-    const response = await handleLogoutUser();
-    console.log("response", response);
-    if (response === "OK") {
-      navigate("/auth");
+    try {
+      const response = await handleLogoutUser();
+      if (response) {
+        navigate("/auth");
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 

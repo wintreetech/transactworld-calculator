@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { Navigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
@@ -30,8 +31,11 @@ export const AuthProvider = ({ children }) => {
       toast.success(
         `${type.charAt(0).toUpperCase() + type.slice(1)} Successful`
       );
-      // the data that is returned is stored in the suth.jsx file
-      return newData;
+      if (newData.role === "admin") {
+        <Navigate to="/admin" />;
+      } else {
+        <Navigate to="/" />;
+      }
     } catch (error) {
       if (error.response) {
         throw new Error(
@@ -53,9 +57,8 @@ export const AuthProvider = ({ children }) => {
       setState({ user: null });
 
       const message = response.data.message;
-      const statusText = response.statusText;
       toast.success(message);
-      return statusText;
+      return true;
     } catch (error) {
       console.error("logout error", error);
     }
