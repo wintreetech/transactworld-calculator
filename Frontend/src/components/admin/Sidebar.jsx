@@ -45,7 +45,10 @@ function Sidebar() {
 
   const handleLogout = async () => {
     const response = await handleLogoutUser();
-    if (response === "OK") navigate("/auth");
+    console.log("response", response);
+    if (response === "OK") {
+      navigate("/auth");
+    }
   };
 
   return (
