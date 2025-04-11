@@ -1,5 +1,4 @@
 import React, { createContext, useEffect, useState } from "react";
-import { Customers } from "../components/admin";
 import axios from "axios";
 import toast from "react-hot-toast";
 
@@ -15,6 +14,35 @@ export const AuthProvider = ({ children }) => {
   });
 
   const [loading, setLoading] = useState(true); // Track loading state
+
+  const handleAuthRequest = async (data, type) => {
+    try {
+      const endpoint = type === "register" ? "/register" : "/login";
+      const response = await axios.post(
+        `${baseUrl}${apiUrl}/auth${endpoint}`,
+        data
+      );
+
+      const { data: newData } = response.data;
+      localStorage.setItem("user", JSON.stringify(newData));
+      // the setState is used to set the data when get the response and is temporary and will run when this function runs.
+      setState({ user: newData });
+      toast.success(
+        `${type.charAt(0).toUpperCase() + type.slice(1)} Successful`
+      );
+      // the data that is returned is stored in the suth.jsx file
+      return newData;
+    } catch (error) {
+      if (error.response) {
+        throw new Error(
+          error.response.data.message ||
+            `error sending ${type.charAt(0).toUpperCase() + type.slice(1)} data`
+        );
+      } else {
+        throw new Error(error.message || "Something went wrong");
+      }
+    }
+  };
 
   const handleLogoutUser = async () => {
     try {
@@ -47,7 +75,9 @@ export const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ state, loading, handleLogoutUser }}>
+    <AuthContext.Provider
+      value={{ state, loading, handleAuthRequest, handleLogoutUser }}
+    >
       {children}
     </AuthContext.Provider>
   );

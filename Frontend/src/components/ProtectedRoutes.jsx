@@ -11,13 +11,14 @@ function ProtectedRoutes({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [role, setRole] = useState(null);
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
+  const { state } = useContext(AuthContext);
+  const { user: storedUser } = state;
 
+  useEffect(() => {
+    // const storedUser = localStorage.getItem("user");
     if (storedUser) {
       try {
-        const user = JSON.parse(storedUser);
-        const token = user.token;
+        const token = storedUser.token;
 
         if (token) {
           const decodeToken = jwtDecode(token);
@@ -34,7 +35,7 @@ function ProtectedRoutes({ children }) {
 
           if (decodeToken) {
             setIsAuthenticated(true);
-            setRole(user.role);
+            setRole(storedUser.role);
           } else {
             setIsAuthenticated(false);
             toast.error("Invalid user");

@@ -1,37 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import AuthContext from "../../context/AuthContext";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-const baseUrl = import.meta.env.VITE_BASE_URL;
-const apiUrl = import.meta.env.VITE_API_URL;
-
-const handleAuthRequest = async (data, type) => {
-  try {
-    const endpoint = type === "register" ? "/register" : "/login";
-    const response = await axios.post(
-      `${baseUrl}${apiUrl}/auth${endpoint}`,
-      data
-    );
-
-    return response.data;
-  } catch (error) {
-    if (error.response) {
-      throw new Error(
-        error.response.data.message ||
-          `error sending ${type.charAt(0).toUpperCase() + type.slice(1)} data`
-      );
-    } else {
-      throw new Error(error.message || "Something went wrong");
-    }
-  }
-};
-
 function Auth() {
-  const ctx = useContext(AuthContext);
-  const user = ctx?.state?.user;
+  const { state, handleAuthRequest } = useContext(AuthContext);
+  if (!state) {
+    return;
+  }
+  const user = state?.user;
 
   const navigate = useNavigate();
   const [registerForm, setRegisterForm] = useState({
@@ -68,12 +46,8 @@ function Auth() {
 
     try {
       const response = await handleAuthRequest(formData, type);
-      localStorage.setItem("user", JSON.stringify(response.data));
-      toast.success(
-        `${type.charAt(0).toUpperCase() + type.slice(1)} Successful`
-      );
 
-      if (response && response.data.role === "admin") {
+      if (response && response.role === "admin") {
         navigate("/admin");
       } else {
         navigate("/");
@@ -92,7 +66,6 @@ function Auth() {
         window.location.pathname !== "/admin"
       ) {
         navigate("/admin");
-        console.log("user :", user);
       } else if (
         user &&
         user.role === "user" &&
