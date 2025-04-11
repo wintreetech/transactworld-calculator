@@ -31,11 +31,7 @@ export const AuthProvider = ({ children }) => {
       toast.success(
         `${type.charAt(0).toUpperCase() + type.slice(1)} Successful`
       );
-      if (newData.role === "admin") {
-        <Navigate to="/admin" />;
-      } else {
-        <Navigate to="/" />;
-      }
+      return newData;
     } catch (error) {
       if (error.response) {
         throw new Error(

@@ -45,7 +45,12 @@ function Auth() {
     const formData = type === "register" ? registerForm : loginForm;
 
     try {
-      await handleAuthRequest(formData, type);
+      const response = await handleAuthRequest(formData, type);
+      if (response.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
     } catch (error) {
       toast.error(error.message);
       console.error(error.message);
