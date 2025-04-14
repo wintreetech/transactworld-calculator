@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Navigate } from "react-router-dom";
+import { decryptData, encryptData, importKey } from "../utils/crypto";
 
 const AuthContext = createContext();
 
@@ -17,7 +18,6 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true); // Track loading state
 
   const handleAuthRequest = async (data, type) => {
-    setLoading(true);
     try {
       const endpoint = type === "register" ? "/register" : "/login";
       const response = await axios.post(
@@ -26,7 +26,11 @@ export const AuthProvider = ({ children }) => {
       );
 
       const { data: newData } = response.data;
-      localStorage.setItem("user", JSON.stringify(newData));
+      // localStorage.setItem("user", JSON.stringify(newData));
+      const key = await importKey();
+      const { encrypted, iv } = await encryptData(newData, key);
+      localStorage.setItem("user_encrypted", encrypted);
+      localStorage.setItem("user_iv", iv);
       // the setState is used to set the data when get the response and is temporary and will run when this function runs.
       setState({ user: newData });
       toast.success(
@@ -49,7 +53,9 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axios.post(`${baseUrl}${apiUrl}/auth/logout`);
 
-      localStorage.removeItem("user");
+      // localStorage.removeItem("user");
+      localStorage.removeItem("user_encrypted");
+      localStorage.removeItem("user_iv");
 
       setState({ user: null });
 
@@ -63,11 +69,31 @@ export const AuthProvider = ({ children }) => {
 
   // Check local storage for authentication state on initial load
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setState({ user: JSON.parse(storedUser) });
-    }
-    setLoading(false);
+    const initAuth = async () => {
+      const encrypted = localStorage.getItem("user_encrypted");
+      const iv = localStorage.getItem("user_iv");
+      if (encrypted && iv) {
+        try {
+          const key = await importKey();
+          const decryptedUser = await decryptData(encrypted, iv, key);
+          // console.log("decryptedUser", decryptedUser);
+          setState({ user: decryptedUser });
+        } catch (error) {
+          console.error(error);
+          localStorage.removeItem("user_encrypted");
+          localStorage.removeItem("user_iv");
+        }
+      }
+      setLoading(false);
+    };
+
+    // before encryption logic
+    // const storedUser = localStorage.getItem("user");
+    // if (storedUser) {
+    //   setState({ user: JSON.parse(storedUser) });
+    // }
+    // setLoading(false);
+    initAuth();
   }, []);
 
   if (loading) {
