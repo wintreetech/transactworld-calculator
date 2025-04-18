@@ -7,18 +7,19 @@ function QuotesDetails({ selectedInvoiceData, handleInvoice, quotename }) {
     setInvoices(selectedInvoiceData);
   }, [selectedInvoiceData]);
 
+  console.log("invoices of the selectedInvoiceData", invoices);
+
   const handleProposedRateChange = (entryid, value) => {
-    const parsedValue = parseFloat(value);
+    const parsedValue = parseFloat(value); // input is percentage
 
     setInvoices((prevInvoice) => {
       const updatedEntries = prevInvoice.invoiceentry?.map((entry) => {
         if (entry._id !== entryid) return entry;
 
-        // If input is cleared or invalid, reset all values
         if (value === "" || isNaN(parsedValue)) {
           return {
             ...entry,
-            proposedrate: "",
+            proposedrate: value,
             oldtotal: 0,
             newtotal: 0,
             savingMO: 0,
@@ -26,18 +27,17 @@ function QuotesDetails({ selectedInvoiceData, handleInvoice, quotename }) {
           };
         }
 
-        const transactionVolume = entry.transactionVolume;
+        const volume = entry.transactionVolume;
+        const buyingRate = entry.buyingRate;
 
-        const oldtotal = transactionVolume * parsedValue;
-        const newtotal = oldtotal;
-
-        const buyingTotal = transactionVolume * entry.buyingRate;
-        const savingMO = buyingTotal - newtotal;
+        const oldtotal = volume * (buyingRate / 100);
+        const newtotal = volume * (parsedValue / 100); // ✅ correct percentage
+        const savingMO = oldtotal - newtotal;
         const savingYY = savingMO * 12;
 
         return {
           ...entry,
-          proposedrate: parsedValue,
+          proposedrate: value,
           oldtotal,
           newtotal,
           savingMO,

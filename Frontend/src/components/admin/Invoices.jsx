@@ -7,41 +7,223 @@ import { LuSave } from "react-icons/lu";
 import { IoMdAdd } from "react-icons/io";
 import { useLocation, useNavigate } from "react-router-dom";
 
-let calculateFees = (formData) => {
+// let calculateFees = (formData) => {
+//   const interchangeRates = {
+//     visa_credit: { UK: 0.3, International: 1.5 },
+//     mastercard_credit: { UK: 0.3, International: 1.5 },
+//     visa_debit: { UK: 0.2, International: 1.15 },
+//     visa_electron: { UK: 0.2, International: 1.15 },
+//     visa_v_pay: { UK: 0.2 },
+//     mastercard_debit: { UK: 0.2, International: 1.15 },
+//     maestro: { UK: 0.2, Europe: 1.15, International: 1.6 },
+//     visa_business_debit: { UK: 1.4, EEA: 1.9, Europe: 2.0 },
+//     visa_corporate_and_purchasing: { UK: 2.0, Europe: 2.0, International: 2.0 },
+//     visa_business: { UK: 1.4, Europe: 2.0, International: 2.0 },
+//     mastercard_business: {
+//       UK: 1.7,
+//       EEA: 1.65,
+//       Europe: 2.1,
+//       International: 2.0,
+//     },
+//     maestro_business_and_commercial: { UK: 1.65, EEA: 1.65, Europe: 2.1 },
+//   };
+
+//   const schemeFees = {
+//     visa_credit: { percent: 0.023, fixed: 0.0097 },
+//     mastercard_credit: { percent: 0.3, fixed: 1.5 },
+//     mastercard_debit: { percent: 0.025, fixed: 0.01 },
+//   };
+
+//   const acquirerFeePercent = 0.08;
+//   const acquirerFeeFixed = 0.05;
+
+//   // Ensure numeric values:
+//   const transactionVolume = parseFloat(formData.transactionVolume) || 0;
+//   const transactions = parseFloat(formData.transactions) || 0;
+
+//   // interchange percentage
+//   const interChangePercentage =
+//     interchangeRates[formData.cardType]?.[formData.issuingLocation] || 0;
+
+//   // interchange percentage
+//   let schemeFeePercent = schemeFees[formData.cardType]?.percent || 0;
+//   let schemeFeeFixed = schemeFees[formData.cardType]?.fixed || 0;
+
+//   // Total Value
+//   let totalInterchangeFee = (
+//     (interChangePercentage / 100) *
+//     transactionVolume
+//   ).toFixed(2);
+
+//   let totalSchemeFee = (
+//     (schemeFeePercent / 100) * transactionVolume +
+//     schemeFeeFixed * transactions
+//   ).toFixed(2);
+
+//   let totalAcquirerFee = (
+//     (acquirerFeePercent / 100) * transactionVolume +
+//     acquirerFeeFixed * transactions
+//   ).toFixed(2);
+
+//   const totalofcalculation = (
+//     parseFloat(totalInterchangeFee) +
+//     parseFloat(totalSchemeFee) +
+//     parseFloat(totalAcquirerFee)
+//   ).toFixed(2);
+
+//   const totalAmount = (transactionVolume * (formData.buyingRate / 100)).toFixed(
+//     2
+//   );
+
+//   return {
+//     totalInterchangeFee,
+//     interChangePercentage,
+//     totalSchemeFee,
+//     totalofcalculation,
+//     totalAmount,
+//   };
+// };
+
+const calculateFees = (formData) => {
   const interchangeRates = {
-    visa_credit: { UK: 0.3, International: 1.0 },
-    mastercard_debit: { UK: 0.25, International: 0.9 },
+    visa_credit: {
+      "UK & EEA": 0.3,
+      International: 1.5,
+    },
+    mastercard_credit: {
+      "UK & EEA": 0.3,
+      International: 1.5,
+    },
+    visa_debit: {
+      "UK & EEA": 0.2,
+      International: 1.15,
+    },
+    visa_electron: {
+      "UK & EEA": 0.2,
+      International: 1.15,
+    },
+    visa_v_pay: {
+      "UK & EEA": 0.2,
+    },
+    mastercard_debit: {
+      "UK & EEA": 0.2,
+      International: 1.15,
+    },
+    maestro: {
+      "UK & EEA": 0.2,
+      Europe: 1.15,
+      International: 1.6,
+    },
+    visa_business_debit: {
+      UK: 1.4,
+      EEA: 1.9,
+      Europe: 2.0,
+    },
+    visa_corporate_and_purchasing: {
+      UK: 2.0,
+      Europe: 2.0,
+      International: 2.0,
+    },
+    visa_business: {
+      UK: 1.4,
+      Europe: 2.0,
+      International: 2.0,
+    },
+    mastercard_business: {
+      UK: 1.7,
+      EEA: 1.65,
+      Europe: 2.0,
+      International: 2.0,
+    },
+    maestro_business_and_commercial: {
+      UK: 1.65,
+      EEA: 1.65,
+      Europe: 2.1,
+    },
   };
 
   const schemeFees = {
-    visa_credit: { percent: 0.023, fixed: 0.0097 },
-    mastercard_debit: { percent: 0.025, fixed: 0.01 },
+    visa_credit: {
+      "UK & EEA": { percent: 0.023, fixed: 0.0097 },
+      International: { percent: 0.023, fixed: 0.093 },
+    },
+    mastercard_credit: {
+      "UK & EEA": { percent: 0.0298, fixed: 0.0085 },
+      International: { percent: 0.0298, fixed: 0.0914 },
+    },
+    visa_debit: {
+      "UK & EEA": { percent: 0.018, fixed: 0.0097 },
+      International: { percent: 0.018, fixed: 0.093 },
+    },
+    visa_electron: {
+      "UK & EEA": { percent: 0.018, fixed: 0.0097 },
+      International: { percent: 0.018, fixed: 0.093 },
+    },
+    visa_v_pay: {
+      "UK & EEA": { percent: 0.018, fixed: 0.0097 },
+    },
+    mastercard_debit: {
+      "UK & EEA": { percent: 0.0298, fixed: 0.0085 },
+      International: { percent: 0.0298, fixed: 0.0085 },
+    },
+    maestro: {
+      "UK & EEA": { percent: 0.0298, fixed: 0.0085 },
+      Europe: { percent: 0.0298, fixed: 0.0085 },
+      International: { percent: 0.0298, fixed: 0.0085 },
+    },
+    visa_business_debit: {
+      UK: { percent: 0.023, fixed: 0.0097 },
+      EEA: { percent: 0.023, fixed: 0.0097 },
+      Europe: { percent: 0.023, fixed: 0.0097 },
+    },
+    visa_corporate_and_purchasing: {
+      UK: { percent: 0.023, fixed: 0.0097 },
+      Europe: { percent: 0.023, fixed: 0.0097 },
+      International: { percent: 0.023, fixed: 0.0097 },
+    },
+    visa_business: {
+      UK: { percent: 0.023, fixed: 0.0097 },
+      Europe: { percent: 0.023, fixed: 0.0097 },
+      International: { percent: 0.023, fixed: 0.0097 },
+    },
+    mastercard_business: {
+      UK: { percent: 0.0298, fixed: 0.0085 },
+      EEA: { percent: 0.0298, fixed: 0.0085 },
+      Europe: { percent: 0.0298, fixed: 0.0085 },
+      International: { percent: 0.0298, fixed: 0.0914 },
+    },
+    maestro_business_and_commercial: {
+      UK: { percent: 0.0298, fixed: 0.0085 },
+      EEA: { percent: 0.0298, fixed: 0.0085 },
+      Europe: { percent: 0.0298, fixed: 0.0085 },
+    },
   };
 
   const acquirerFeePercent = 0.08;
+  const acquirerFeeFixed = 0.05;
 
-  // Ensure numeric values:
   const transactionVolume = parseFloat(formData.transactionVolume) || 0;
   const transactions = parseFloat(formData.transactions) || 0;
 
-  // interchange percentage
-  const interChangePercentage =
-    interchangeRates[formData.cardType]?.[formData.issuingLocation] || 0;
+  const card = formData.cardType;
+  const location = formData.issuingLocation;
 
-  // interchange percentage
-  let schemeFeePercent = schemeFees[formData.cardType]?.percent || 0;
-  let schemeFeeFixed = schemeFees[formData.cardType]?.fixed || 0;
+  const interChangePercentage = interchangeRates[card]?.[location] || 0;
+  const scheme = schemeFees[card]?.[location] || { percent: 0, fixed: 0 };
 
-  let totalInterchangeFee = (interChangePercentage / 100) * transactionVolume;
-
-  let totalSchemeFee = (
-    (schemeFeePercent / 100) * transactionVolume +
-    schemeFeeFixed * transactions
+  const totalInterchangeFee = (
+    (interChangePercentage / 100) *
+    transactionVolume
   ).toFixed(2);
 
-  let totalAcquirerFee = (
-    (acquirerFeePercent / 100) *
-    transactionVolume
+  const totalSchemeFee = (
+    (scheme.percent / 100) * transactionVolume +
+    scheme.fixed * transactions
+  ).toFixed(2);
+
+  const totalAcquirerFee = (
+    (acquirerFeePercent / 100) * transactionVolume +
+    acquirerFeeFixed * transactions
   ).toFixed(2);
 
   const totalofcalculation = (
@@ -50,11 +232,17 @@ let calculateFees = (formData) => {
     parseFloat(totalAcquirerFee)
   ).toFixed(2);
 
+  const totalAmount = (
+    transactionVolume *
+    ((parseFloat(formData.buyingRate) || 0) / 100)
+  ).toFixed(2);
+
   return {
     totalInterchangeFee,
     interChangePercentage,
     totalSchemeFee,
     totalofcalculation,
+    totalAmount,
   };
 };
 
@@ -105,15 +293,16 @@ function Invoices() {
       currentEntry.issuingLocation,
       currentEntry.transactionVolume,
       currentEntry.transactions,
+      currentEntry.buyingRate,
     ]
   );
 
   useEffect(() => {
     setCurrentEntry((prev) => ({
       ...prev,
-      interchangeFees: result.interChangePercentage,
+      interchangeFees: result.totalInterchangeFee,
       schemeFees: result.totalSchemeFee,
-      total: result.totalofcalculation,
+      total: result.totalAmount,
     }));
   }, [result]);
 
@@ -188,6 +377,73 @@ function Invoices() {
     setInvoiceEntries([]);
   };
 
+  const cardTypes = [
+    {
+      value: "visa_credit",
+      label: "Visa Credit",
+      issuing_locations: ["UK & EEA", "International"],
+    },
+    {
+      value: "mastercard_credit",
+      label: "Mastercard Credit",
+      issuing_locations: ["UK & EEA", "International"],
+    },
+    {
+      value: "visa_debit",
+      label: "Visa Debit",
+      issuing_locations: ["UK & EEA", "International"],
+    },
+    {
+      value: "visa_electron",
+      label: "Visa Electron",
+      issuing_locations: ["UK & EEA", "International"],
+    },
+    {
+      value: "visa_v_pay",
+      label: "Visa V Pay",
+      issuing_locations: ["UK & EEA"],
+    },
+    {
+      value: "mastercard_debit",
+      label: "Mastercard Debit",
+      issuing_locations: ["UK & EEA", "International"],
+    },
+    {
+      value: "maestro",
+      label: "Maestro",
+      issuing_locations: ["UK & EEA", "Europe", "International"],
+    },
+    {
+      value: "visa_business_debit",
+      label: "Visa Business Debit",
+      issuing_locations: ["UK", "EEA", "Europe"],
+    },
+    {
+      value: "visa_corporate_and_purchasing",
+      label: "Visa Corporate and Purchasing",
+      issuing_locations: ["UK", "Europe", "International"],
+    },
+    {
+      value: "visa_business",
+      label: "Visa Business",
+      issuing_locations: ["UK", "Europe", "International"],
+    },
+    {
+      value: "mastercard_business",
+      label: "Mastercard Business",
+      issuing_locations: ["UK", "EEA", "Europe", "International"],
+    },
+    {
+      value: "maestro_business_and_commercial",
+      label: "Maestro Business and Commercial",
+      issuing_locations: ["UK", "EEA", "Europe"],
+    },
+  ];
+
+  const allIssuingLocations = Array.from(
+    new Set(cardTypes.flatMap((card) => card.issuing_locations))
+  );
+
   return (
     <>
       <div className="mb-4">
@@ -245,15 +501,18 @@ function Invoices() {
                     <option value="" disabled>
                       -- Select Card Type --
                     </option>
-                    <option value="visa_credit">Visa Credit</option>
-                    <option value="mastercard_debit">Mastercard Debit</option>
+                    {cardTypes.map((card) => (
+                      <option key={card.value} value={card.value}>
+                        {card.label}
+                      </option>
+                    ))}
                   </select>
                 </fieldset>
 
                 {/* Issuing Location */}
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend text-sm font-medium">
-                    What is your Issuing Locaion?
+                    What is your Issuing Location?
                   </legend>
                   <select
                     name="issuingLocation"
@@ -265,8 +524,11 @@ function Invoices() {
                     <option value="" disabled>
                       -- Select Issuing Location --
                     </option>
-                    <option value="UK">UK & EEA</option>
-                    <option value="International">International</option>
+                    {allIssuingLocations.map((location) => (
+                      <option key={location} value={location}>
+                        {location}
+                      </option>
+                    ))}
                   </select>
                 </fieldset>
 
