@@ -6,124 +6,9 @@ import InvoiceContext from "../../context/InvoiceContext";
 import { LuSave } from "react-icons/lu";
 import { IoMdAdd } from "react-icons/io";
 import { useLocation, useNavigate } from "react-router-dom";
+import { cardTypes, interchangeRates, schemeFees } from "../../config";
 
 const calculateFees = (formData) => {
-  console.log("formData check the data", formData);
-
-  const interchangeRates = {
-    visa_credit: {
-      "UK & EEA": 0.3,
-      International: 1.5,
-    },
-    mastercard_credit: {
-      "UK & EEA": 0.3,
-      International: 1.5,
-    },
-    visa_debit: {
-      "UK & EEA": 0.2,
-      International: 1.15,
-    },
-    visa_electron: {
-      "UK & EEA": 0.2,
-      International: 1.15,
-    },
-    visa_v_pay: {
-      "UK & EEA": 0.2,
-    },
-    mastercard_debit: {
-      "UK & EEA": 0.2,
-      International: 1.15,
-    },
-    maestro: {
-      "UK & EEA": 0.2,
-      Europe: 1.15,
-      International: 1.6,
-    },
-    visa_business_debit: {
-      UK: 1.4,
-      EEA: 1.9,
-      Europe: 2.0,
-    },
-    visa_corporate_and_purchasing: {
-      UK: 2.0,
-      Europe: 2.0,
-      International: 2.0,
-    },
-    visa_business: {
-      UK: 1.4,
-      Europe: 2.0,
-      International: 2.0,
-    },
-    mastercard_business: {
-      UK: 1.7,
-      EEA: 1.65,
-      Europe: 2.0,
-      International: 2.0,
-    },
-    maestro_business_and_commercial: {
-      UK: 1.65,
-      EEA: 1.65,
-      Europe: 2.1,
-    },
-  };
-
-  const schemeFees = {
-    visa_credit: {
-      "UK & EEA": { percent: 0.023, fixed: 0.0097 },
-      International: { percent: 0.023, fixed: 0.093 },
-    },
-    mastercard_credit: {
-      "UK & EEA": { percent: 0.0298, fixed: 0.0085 },
-      International: { percent: 0.0298, fixed: 0.0914 },
-    },
-    visa_debit: {
-      "UK & EEA": { percent: 0.018, fixed: 0.0097 },
-      International: { percent: 0.018, fixed: 0.093 },
-    },
-    visa_electron: {
-      "UK & EEA": { percent: 0.018, fixed: 0.0097 },
-      International: { percent: 0.018, fixed: 0.093 },
-    },
-    visa_v_pay: {
-      "UK & EEA": { percent: 0.018, fixed: 0.0097 },
-    },
-    mastercard_debit: {
-      "UK & EEA": { percent: 0.0298, fixed: 0.0085 },
-      International: { percent: 0.0298, fixed: 0.0085 },
-    },
-    maestro: {
-      "UK & EEA": { percent: 0.0298, fixed: 0.0085 },
-      Europe: { percent: 0.0298, fixed: 0.0085 },
-      International: { percent: 0.0298, fixed: 0.0085 },
-    },
-    visa_business_debit: {
-      UK: { percent: 0.023, fixed: 0.0097 },
-      EEA: { percent: 0.023, fixed: 0.0097 },
-      Europe: { percent: 0.023, fixed: 0.0097 },
-    },
-    visa_corporate_and_purchasing: {
-      UK: { percent: 0.023, fixed: 0.0097 },
-      Europe: { percent: 0.023, fixed: 0.0097 },
-      International: { percent: 0.023, fixed: 0.0097 },
-    },
-    visa_business: {
-      UK: { percent: 0.023, fixed: 0.0097 },
-      Europe: { percent: 0.023, fixed: 0.0097 },
-      International: { percent: 0.023, fixed: 0.0097 },
-    },
-    mastercard_business: {
-      UK: { percent: 0.0298, fixed: 0.0085 },
-      EEA: { percent: 0.0298, fixed: 0.0085 },
-      Europe: { percent: 0.0298, fixed: 0.0085 },
-      International: { percent: 0.0298, fixed: 0.0914 },
-    },
-    maestro_business_and_commercial: {
-      UK: { percent: 0.0298, fixed: 0.0085 },
-      EEA: { percent: 0.0298, fixed: 0.0085 },
-      Europe: { percent: 0.0298, fixed: 0.0085 },
-    },
-  };
-
   const acquirerFeePercent = 0.08;
   const acquirerFeeFixed = 0.05;
 
@@ -176,69 +61,6 @@ const calculateFees = (formData) => {
   };
 };
 
-const cardTypes = [
-  {
-    value: "visa_credit",
-    label: "Visa Credit",
-    issuing_locations: ["UK & EEA", "International"],
-  },
-  {
-    value: "mastercard_credit",
-    label: "Mastercard Credit",
-    issuing_locations: ["UK & EEA", "International"],
-  },
-  {
-    value: "visa_debit",
-    label: "Visa Debit",
-    issuing_locations: ["UK & EEA", "International"],
-  },
-  {
-    value: "visa_electron",
-    label: "Visa Electron",
-    issuing_locations: ["UK & EEA", "International"],
-  },
-  {
-    value: "visa_v_pay",
-    label: "Visa V Pay",
-    issuing_locations: ["UK & EEA"],
-  },
-  {
-    value: "mastercard_debit",
-    label: "Mastercard Debit",
-    issuing_locations: ["UK & EEA", "International"],
-  },
-  {
-    value: "maestro",
-    label: "Maestro",
-    issuing_locations: ["UK & EEA", "Europe", "International"],
-  },
-  {
-    value: "visa_business_debit",
-    label: "Visa Business Debit",
-    issuing_locations: ["UK", "EEA", "Europe"],
-  },
-  {
-    value: "visa_corporate_and_purchasing",
-    label: "Visa Corporate and Purchasing",
-    issuing_locations: ["UK", "Europe", "International"],
-  },
-  {
-    value: "visa_business",
-    label: "Visa Business",
-    issuing_locations: ["UK", "Europe", "International"],
-  },
-  {
-    value: "mastercard_business",
-    label: "Mastercard Business",
-    issuing_locations: ["UK", "EEA", "Europe", "International"],
-  },
-  {
-    value: "maestro_business_and_commercial",
-    label: "Maestro Business and Commercial",
-    issuing_locations: ["UK", "EEA", "Europe"],
-  },
-];
-
 function Invoices() {
   const [customer, setCustomer] = useState("");
   const [invoiceEntries, setInvoiceEntries] = useState([]);
@@ -262,6 +84,8 @@ function Invoices() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // For Customer
     if (name === "customer") {
       setCustomer(value);
     } else {
@@ -270,6 +94,8 @@ function Invoices() {
         [name]: value,
       }));
     }
+
+    // For Card Type
     if (name === "cardType") {
       const selectedCard = cardTypes.find((card) => card.value === value);
       const defaultIssuingLocation = selectedCard?.issuing_locations?.[0] || "";
@@ -294,7 +120,6 @@ function Invoices() {
   const issuingLocations = selectedCard?.issuing_locations || [];
 
   // Above is newly added code
-
   const openModal = () => {
     if (!customer || customer === "Select your customer") {
       toast("Please select a customer, before adding an invoice entry.");
@@ -355,9 +180,8 @@ function Invoices() {
       !currentEntry.transactionVolume ||
       !currentEntry.buyingRate
     ) {
-      // Show toast message if fields are empty
       toast("Please fill all the fields.");
-      return; // Stop further execution
+      return;
     }
     setInvoiceEntries((prev) => [...prev, { ...currentEntry }]);
     setCurrentEntry({
@@ -475,28 +299,6 @@ function Invoices() {
                 </fieldset>
 
                 {/* Issuing Location */}
-                {/* <fieldset className="fieldset">
-                  <legend className="fieldset-legend text-sm font-medium">
-                    What is your Issuing Location?
-                  </legend>
-                  <select
-                    name="issuingLocation"
-                    value={currentEntry.issuingLocation}
-                    onChange={handleChange}
-                    className="select"
-                    required
-                  >
-                    <option value="" disabled>
-                      -- Select Issuing Location --
-                    </option>
-                    {allIssuingLocations.map((location) => (
-                      <option key={location} value={location}>
-                        {location}
-                      </option>
-                    ))}
-                  </select>
-                </fieldset> */}
-
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend text-sm font-medium">
                     What is your Issuing Location?
