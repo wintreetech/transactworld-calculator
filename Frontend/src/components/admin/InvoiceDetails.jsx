@@ -1,6 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
+import { MdOutlineEdit } from "react-icons/md";
+import { IoMdRemoveCircleOutline } from "react-icons/io";
 
-function InvoiceDetails({ invoiceEntries }) {
+function InvoiceDetails({ invoiceEntries, onEdit, onRemove }) {
+  const handleEdit = (item, index) => {
+    if (onEdit) onEdit(item, index);
+  };
+
+  const handleRemoveEntry = (item, index) => {
+    if (onRemove) onRemove(item, index);
+  };
+
   return (
     <>
       <div className="overflow-x-auto mb-4 rounded-box border border-base-content/5 bg-base-100 overflow-y-auto h-[calc(100vh-150px)]">
@@ -18,6 +29,7 @@ function InvoiceDetails({ invoiceEntries }) {
                 <th className="text-black">Transactions Volume</th>
                 <th className="text-black">Current Rate</th>
                 <th className="text-black">Total</th>
+                <th>&nbsp;</th>
               </tr>
             </thead>
             {/* body */}
@@ -44,6 +56,30 @@ function InvoiceDetails({ invoiceEntries }) {
                     <td>{item.transactionVolume}</td>
                     <td>{item.buyingRate}</td>
                     <td>{item.total}</td>
+                    <td>
+                      <div className="dropdown dropdown-end">
+                        <div tabIndex={0} role="button" className="btn m-1">
+                          <PiDotsThreeOutlineVerticalFill />
+                        </div>
+                        <ul
+                          tabIndex={0}
+                          className="dropdown-content menu bg-base-100 rounded-box z-1 w-40 p-2 shadow-sm capitalize"
+                        >
+                          <li onClick={() => handleEdit(item, index)}>
+                            <a>
+                              <MdOutlineEdit />
+                              edit
+                            </a>
+                          </li>
+                          <li onClick={() => handleRemoveEntry(item, index)}>
+                            <a className="text-red-500">
+                              <IoMdRemoveCircleOutline />
+                              remove
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </td>
                   </tr>
                 );
               })}

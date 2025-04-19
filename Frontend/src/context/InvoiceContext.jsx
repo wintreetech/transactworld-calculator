@@ -67,6 +67,14 @@ export const InvoiceProvider = ({ children }) => {
     }
   };
 
+  const fetchAllInvoicesData = async (customerName) => {
+    try {
+      console.log("fetched all invoices for", customerName);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   // Fetch all invoices of a specific customer
   const fetchAllCustomerInvoice = async (customername) => {
     try {
@@ -92,6 +100,7 @@ export const InvoiceProvider = ({ children }) => {
         addInvoice,
         fetchInvoiceData,
         fetchAllCustomerInvoice,
+        fetchAllInvoicesData,
         invoicesData,
         singleInvoiceData,
         loading,

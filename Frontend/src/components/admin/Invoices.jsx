@@ -6,6 +6,7 @@ import InvoiceContext from "../../context/InvoiceContext";
 import { LuSave } from "react-icons/lu";
 import { IoMdAdd } from "react-icons/io";
 import { useLocation, useNavigate } from "react-router-dom";
+import { TbFileInvoice } from "react-icons/tb";
 import { cardTypes, interchangeRates, schemeFees } from "../../config";
 
 const calculateFees = (formData) => {
@@ -76,11 +77,12 @@ function Invoices() {
     internationalMarkup: "",
     total: 0,
   });
+  const [editingIndex, setEditingIndex] = useState(null);
 
   const location = useLocation();
 
   const { customers } = useContext(CustomerContext);
-  const { addInvoice } = useContext(InvoiceContext);
+  const { addInvoice, fetchAllInvoicesData } = useContext(InvoiceContext);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -111,6 +113,14 @@ function Invoices() {
         [name]: value,
       }));
     }
+  };
+
+  const handleFetchAllInvoices = () => {
+    if (!customer || customer === "Select your customer") {
+      toast("Please select a customer.");
+      return; // Prevent modal from opening if no customer is selected
+    }
+    fetchAllInvoicesData(customer);
   };
 
   // Get locations for selected cardType
@@ -171,6 +181,29 @@ function Invoices() {
     };
   }, [invoiceEntries, location]);
 
+  // Edit an entry
+  const handleEditEntry = (value, index) => {
+    openModal();
+    setCurrentEntry(value);
+    setEditingIndex(index);
+  };
+
+  // Edit an entry
+  const handleRemoveEntry = (value, index) => {
+    const confirm = window.confirm(
+      `Are you sure you want to remove entry No. ${index + 1}?`
+    );
+    if (!confirm) return;
+
+    const updatedEntries = [...invoiceEntries];
+    updatedEntries.splice(index, 1);
+    setInvoiceEntries(updatedEntries);
+
+    if (editingIndex === index) {
+      resetEntry();
+    }
+  };
+
   const addEntry = (e) => {
     e.preventDefault();
     if (
@@ -183,7 +216,16 @@ function Invoices() {
       toast("Please fill all the fields.");
       return;
     }
-    setInvoiceEntries((prev) => [...prev, { ...currentEntry }]);
+
+    if (editingIndex !== null) {
+      const updatedEntries = [...invoiceEntries];
+      updatedEntries[editingIndex] = currentEntry;
+      setInvoiceEntries(updatedEntries);
+      setEditingIndex(null);
+    } else {
+      setInvoiceEntries((prev) => [...prev, { ...currentEntry }]);
+    }
+
     setCurrentEntry({
       cardType: "",
       issuingLocation: "",
@@ -231,6 +273,7 @@ function Invoices() {
       total: 0,
     });
     document.getElementById("my_modal_3").close();
+    setEditingIndex(null);
   };
 
   return (
@@ -256,10 +299,21 @@ function Invoices() {
         </select>
 
         <div className="flex gap-2">
-          <button className="btn text-base tracking-wide" onClick={openModal}>
+          <button
+            className="btn text-base tracking-wide capitalize"
+            onClick={openModal}
+          >
             <IoMdAdd />
             Add Invoice Entry
           </button>
+          <button
+            className="btn text-base capitalize"
+            onClick={handleFetchAllInvoices}
+          >
+            <TbFileInvoice />
+            Show all invoices
+          </button>
+
           {invoiceEntries.length !== 0 ? (
             <button
               className="btn success text-base tracking-wide"
@@ -396,9 +450,9 @@ function Invoices() {
               </div>
               <button
                 type="submit"
-                className="btn absolute right-8 text-3xl bottom-8 w-2 h-8"
+                className="btn absolute right-8 text-base bottom-8 capitalize"
               >
-                +
+                {`${editingIndex === null ? "+ Add entry" : "update Entry"}`}
               </button>
             </form>
             <button
@@ -448,7 +502,11 @@ function Invoices() {
           </div>
         </dialog>
       </div>
-      <InvoiceDetails invoiceEntries={invoiceEntries} />
+      <InvoiceDetails
+        invoiceEntries={invoiceEntries}
+        onEdit={handleEditEntry}
+        onRemove={handleRemoveEntry}
+      />
     </>
   );
 }
