@@ -4610,3 +4610,9 @@ export const schemeFees = {
     Europe: { percent: 0.0298, fixed: 0.0085 },
   },
 };
+
+
+export const pricingModel = [
+  { value: "ic++", label: "IC++" },
+  { value: "blended", label: "Blended" },
+];

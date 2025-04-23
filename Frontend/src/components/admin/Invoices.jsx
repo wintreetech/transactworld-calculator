@@ -7,7 +7,7 @@ import { LuSave } from "react-icons/lu";
 import { IoMdAdd } from "react-icons/io";
 import { useLocation, useNavigate } from "react-router-dom";
 import { TbFileInvoice } from "react-icons/tb";
-import { cardTypes, interchangeRates, schemeFees } from "../../config";
+import { cardTypes, interchangeRates, schemeFees, pricingModel } from "../../config";
 
 const calculateFees = (formData) => {
   const acquirerFeePercent = 0.08;
@@ -64,6 +64,7 @@ const calculateFees = (formData) => {
 
 function Invoices() {
   const [customer, setCustomer] = useState("");
+  const [selectPricingModel, setSelectPricingModel] = useState("")
   const [invoiceEntries, setInvoiceEntries] = useState([]);
   const [invoiceName, setInvoiceName] = useState("");
   const [currentEntry, setCurrentEntry] = useState({
@@ -84,8 +85,17 @@ function Invoices() {
   const { customers } = useContext(CustomerContext);
   const { addInvoice, fetchAllInvoicesData } = useContext(InvoiceContext);
 
+  console.log("pricing model", selectPricingModel);
+  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+
+    // For Pricing Model
+    if(name === "pricingmodel"){
+      setSelectPricingModel(value)
+    }
 
     // For Customer
     if (name === "customer") {
@@ -141,6 +151,7 @@ function Invoices() {
   const result = useMemo(
     () => calculateFees(currentEntry),
     [
+      selectPricingModel,
       currentEntry.cardType,
       currentEntry.issuingLocation,
       currentEntry.transactionVolume,
@@ -155,7 +166,7 @@ function Invoices() {
       ...prev,
       interchangeFees: result.totalInterchangeFee,
       schemeFees: result.totalSchemeFee,
-      total: result.totalAmount,
+      total: selectPricingModel === "ic++" ? result.totalofcalculation : result.totalAmount ,
     }));
   }, [result]);
 
@@ -262,6 +273,7 @@ function Invoices() {
   };
 
   const resetEntry = () => {
+    setSelectPricingModel("")
     setCurrentEntry({
       cardType: "",
       issuingLocation: "",
@@ -328,7 +340,31 @@ function Invoices() {
         <dialog id="my_modal_3" className="modal">
           <div className="modal-box w-11/12 max-w-4xl p-8">
             <form method="dialog" onSubmit={addEntry}>
-              <div className="grid grid-cols-3 grid-rows-2 gap-6">
+              <div className="grid grid-cols-4 grid-rows-2 gap-6">
+
+                {/* Pricing Model */}
+                <fieldset className="fieldset">
+                  <legend className="fieldset-legend text-sm font-medium">
+                    Select your Pricing Model
+                  </legend>
+                  <select
+                    name="pricingmodel"
+                    value={selectPricingModel}
+                    onChange={handleChange}
+                    className="select"
+                    required
+                  >
+                    <option value="" disabled>
+                      -- Select Pricing Model --
+                    </option>
+                    {pricingModel.map((price) => (
+                      <option key={price.value} value={price.value}>
+                        {price.label}
+                      </option>
+                    ))}
+                  </select>
+                </fieldset>
+
                 {/* Card Type */}
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend text-sm font-medium">
@@ -379,7 +415,7 @@ function Invoices() {
                 {/* Transactions */}
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend text-sm font-medium">
-                    What is the Number of Transactions?
+                    Number of Transactions?
                   </legend>
                   <input
                     type="number"
