@@ -7,7 +7,13 @@ import { LuSave } from "react-icons/lu";
 import { IoMdAdd } from "react-icons/io";
 import { useLocation, useNavigate } from "react-router-dom";
 import { TbFileInvoice } from "react-icons/tb";
-import { cardTypes, interchangeRates, schemeFees, pricingModel } from "../../config";
+import {
+  cardTypes,
+  interchangeRates,
+  schemeFees,
+  pricingModel,
+} from "../../config";
+import InvoiceCard from "./InvoiceCard";
 
 const calculateFees = (formData) => {
   const acquirerFeePercent = 0.08;
@@ -64,7 +70,7 @@ const calculateFees = (formData) => {
 
 function Invoices() {
   const [customer, setCustomer] = useState("");
-  const [selectPricingModel, setSelectPricingModel] = useState("")
+  const [selectPricingModel, setSelectPricingModel] = useState("");
   const [invoiceEntries, setInvoiceEntries] = useState([]);
   const [invoiceName, setInvoiceName] = useState("");
   const [currentEntry, setCurrentEntry] = useState({
@@ -86,15 +92,13 @@ function Invoices() {
   const { addInvoice, fetchAllInvoicesData } = useContext(InvoiceContext);
 
   console.log("pricing model", selectPricingModel);
-  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-
     // For Pricing Model
-    if(name === "pricingmodel"){
-      setSelectPricingModel(value)
+    if (name === "pricingmodel") {
+      setSelectPricingModel(value);
     }
 
     // For Customer
@@ -166,7 +170,10 @@ function Invoices() {
       ...prev,
       interchangeFees: result.totalInterchangeFee,
       schemeFees: result.totalSchemeFee,
-      total: selectPricingModel === "ic++" ? result.totalofcalculation : result.totalAmount ,
+      total:
+        selectPricingModel === "ic++"
+          ? result.totalofcalculation
+          : result.totalAmount,
     }));
   }, [result]);
 
@@ -273,7 +280,7 @@ function Invoices() {
   };
 
   const resetEntry = () => {
-    setSelectPricingModel("")
+    setSelectPricingModel("");
     setCurrentEntry({
       cardType: "",
       issuingLocation: "",
@@ -341,7 +348,6 @@ function Invoices() {
           <div className="modal-box w-11/12 max-w-4xl p-8">
             <form method="dialog" onSubmit={addEntry}>
               <div className="grid grid-cols-4 grid-rows-2 gap-6">
-
                 {/* Pricing Model */}
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend text-sm font-medium">
@@ -543,6 +549,7 @@ function Invoices() {
         onEdit={handleEditEntry}
         onRemove={handleRemoveEntry}
       />
+      {/* <InvoiceCard /> */}
     </>
   );
 }

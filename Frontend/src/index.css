@@ -18,3 +18,11 @@
   background-color: #22c55e;
   color: white;
 }
+
+.invoice-detail-wrapper {
+  scrollbar-width: none;
+}
+
+.invoice-detail-wrapper::-webkit-scrollbar {
+  display: none;
+}

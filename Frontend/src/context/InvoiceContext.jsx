@@ -30,12 +30,6 @@ export const InvoiceProvider = ({ children }) => {
   // Fetch Invoice Based on the Customer
   const fetchInvoiceData = async (customername, selectedInvoice) => {
     setLoading(true);
-    // console.log(
-    //   "customername",
-    //   customername,
-    //   "selectedInvoice",
-    //   selectedInvoice
-    // );
     try {
       const response = await axios.get(`${baseUrl}${apiUrl}/invoice/single`, {
         params: {
@@ -70,6 +64,9 @@ export const InvoiceProvider = ({ children }) => {
   const fetchAllInvoicesData = async (customerName) => {
     try {
       console.log("fetched all invoices for", customerName);
+
+      const response = await axios.post("")
+
     } catch (error) {
       console.error(error);
     }

@@ -1,8 +1,8 @@
 import React, { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { Navigate } from "react-router-dom";
 import { decryptData, encryptData, importKey } from "../utils/crypto";
+import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext();
 
@@ -14,6 +14,8 @@ export const AuthProvider = ({ children }) => {
   const [state, setState] = useState({
     user: null,
   });
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const [loading, setLoading] = useState(true); // Track loading state
 
@@ -33,6 +35,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("user_iv", iv);
       // the setState is used to set the data when get the response and is temporary and will run when this function runs.
       setState({ user: newData });
+      setIsAuthenticated(true);
       toast.success(
         `${type.charAt(0).toUpperCase() + type.slice(1)} Successful`
       );
@@ -54,46 +57,61 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.post(`${baseUrl}${apiUrl}/auth/logout`);
 
       // localStorage.removeItem("user");
-      localStorage.removeItem("user_encrypted");
-      localStorage.removeItem("user_iv");
-
-      setState({ user: null });
 
       const message = response.data.message;
       toast.success(message);
       return true;
     } catch (error) {
       console.error("logout error", error);
+    } finally {
+      localStorage.removeItem("user_encrypted");
+      localStorage.removeItem("user_iv");
+      resetAuth();
     }
+  };
+
+  const resetAuth = () => {
+    setState({ user: null });
+    setIsAuthenticated(false);
+  };
+
+  const validateSession = async () => {
+    const encrypted = localStorage.getItem("user_encrypted");
+    const iv = localStorage.getItem("user_iv");
+
+    if (!encrypted || !iv) {
+      resetAuth();
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const key = await importKey();
+      const decryptedUser = await decryptData(encrypted, iv, key);
+
+      const token = decryptedUser.token;
+      const decodeToken = jwtDecode(token);
+      const currentTime = Date.now() / 1000;
+
+      if (decodeToken.exp && decodeToken.exp < currentTime) {
+        localStorage.removeItem("user_encrypted");
+        localStorage.removeItem("user_iv");
+        toast.error("Session expired. Please login again.");
+      } else {
+        setState({ user: decryptedUser });
+        setIsAuthenticated(true);
+      }
+    } catch (error) {
+      console.error("Session validation failed:", error);
+      resetAuth();
+    }
+
+    setLoading(false);
   };
 
   // Check local storage for authentication state on initial load
   useEffect(() => {
-    const initAuth = async () => {
-      const encrypted = localStorage.getItem("user_encrypted");
-      const iv = localStorage.getItem("user_iv");
-      if (encrypted && iv) {
-        try {
-          const key = await importKey();
-          const decryptedUser = await decryptData(encrypted, iv, key);
-          // console.log("decryptedUser", decryptedUser);
-          setState({ user: decryptedUser });
-        } catch (error) {
-          console.error(error);
-          localStorage.removeItem("user_encrypted");
-          localStorage.removeItem("user_iv");
-        }
-      }
-      setLoading(false);
-    };
-
-    // before encryption logic
-    // const storedUser = localStorage.getItem("user");
-    // if (storedUser) {
-    //   setState({ user: JSON.parse(storedUser) });
-    // }
-    // setLoading(false);
-    initAuth();
+    validateSession();
   }, []);
 
   if (loading) {
@@ -102,7 +120,14 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ state, loading, handleAuthRequest, handleLogoutUser }}
+      value={{
+        state,
+        isAuthenticated,
+        loading,
+        handleAuthRequest,
+        handleLogoutUser,
+        resetAuth,
+      }}
     >
       {children}
     </AuthContext.Provider>
