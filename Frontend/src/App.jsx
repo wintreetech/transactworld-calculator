@@ -14,54 +14,54 @@ import AppProvider from "./context/AppContext";
 // admin component
 
 function App() {
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <Home />,
-    },
-    {
-      path: "/auth",
-      element: <Auth />,
-    },
-    {
-      path: "/admin",
-      element: (
-        <ProtectedRoutes>
-          <AdminLayout />
-        </ProtectedRoutes>
-      ),
-      children: [
-        {
-          path: "",
-          element: <Dashboard />,
-        },
-        {
-          path: "customers",
-          element: <Customers />,
-        },
-        {
-          path: "invoices",
-          element: <Invoices />,
-        },
-        {
-          path: "quotes",
-          element: <Quotes />,
-        },
-      ],
-    },
-    {
-      path: "*",
-      element: <Notfound />,
-    },
-  ]);
+	const router = createBrowserRouter([
+		{
+			path: "/",
+			element: <Home />,
+		},
+		{
+			path: "/auth",
+			element: <Auth />,
+		},
+		{
+			path: "/admin",
+			element: (
+				<ProtectedRoutes>
+					<AdminLayout />
+				</ProtectedRoutes>
+			),
+			children: [
+				{
+					path: "",
+					element: <Dashboard />,
+				},
+				{
+					path: "customers",
+					element: <Customers />,
+				},
+				{
+					path: "invoices",
+					element: <Invoices />,
+				},
+				{
+					path: "quotes",
+					element: <Quotes />,
+				},
+			],
+		},
+		{
+			path: "*",
+			element: <Notfound />,
+		},
+	]);
 
-  return (
-    <>
-      <AppProvider>
-        <RouterProvider router={router} />
-      </AppProvider>
-    </>
-  );
+	return (
+		<>
+			<AppProvider>
+				<RouterProvider router={router} />
+			</AppProvider>
+		</>
+	);
 }
 
 export default App;
