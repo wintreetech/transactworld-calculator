@@ -92,8 +92,6 @@ function Invoices() {
 	const { customers } = useContext(CustomerContext);
 	const { addInvoice, fetchAllInvoicesData } = useContext(InvoiceContext);
 
-	console.log("select date model", selectDate);
-
 	const handleChange = (e) => {
 		const { name, value } = e.target;
 
@@ -276,6 +274,8 @@ function Invoices() {
 			entries: invoiceEntries,
 			invoicedate: selectDate,
 		};
+
+		console.log(invoiceData);
 
 		addInvoice(invoiceData);
 
